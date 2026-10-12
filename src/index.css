@@ -1,0 +1,136 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --font-sans: 'Inter', system-ui, Avenir, Helvetica, Arial, sans-serif;
+
+    /* Dark theme — MarketPulse default */
+    --background: 210 22% 6%;
+    --foreground: 210 12% 88%;
+    --card: 212 22% 10%;
+    --card-foreground: 210 12% 90%;
+    --popover: 212 24% 8%;
+    --popover-foreground: 210 12% 90%;
+    --primary: 210 100% 56%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 212 18% 16%;
+    --secondary-foreground: 210 12% 85%;
+    --muted: 212 16% 14%;
+    --muted-foreground: 210 10% 48%;
+    --accent: 212 100% 56%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
+    --success: 142 70% 45%;
+    --success-foreground: 0 0% 100%;
+    --warning: 38 92% 50%;
+    --warning-foreground: 0 0% 10%;
+    --border: 208 22% 18%;
+    --input: 208 20% 16%;
+    --ring: 210 100% 56%;
+    --sidebar: 212 24% 7%;
+
+    --chart-1: 210 100% 56%;
+    --chart-2: 142 70% 45%;
+    --chart-3: 0 72% 51%;
+    --chart-4: 38 92% 50%;
+    --chart-5: 280 60% 60%;
+
+    --radius: 0.5rem;
+  }
+
+  .light {
+    --background: 0 0% 98%;
+    --foreground: 210 12% 12%;
+    --card: 0 0% 100%;
+    --card-foreground: 210 12% 12%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 210 12% 12%;
+    --primary: 210 100% 48%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 210 14% 94%;
+    --secondary-foreground: 210 12% 12%;
+    --muted: 210 14% 94%;
+    --muted-foreground: 210 8% 42%;
+    --accent: 210 100% 48%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 72% 48%;
+    --destructive-foreground: 0 0% 100%;
+    --success: 142 60% 38%;
+    --success-foreground: 0 0% 100%;
+    --warning: 38 90% 45%;
+    --warning-foreground: 0 0% 10%;
+    --border: 210 14% 88%;
+    --input: 210 14% 90%;
+    --ring: 210 100% 48%;
+    --sidebar: 0 0% 96%;
+
+    --chart-1: 210 100% 48%;
+    --chart-2: 142 60% 38%;
+    --chart-3: 0 72% 48%;
+    --chart-4: 38 90% 45%;
+    --chart-5: 280 50% 50%;
+  }
+}
+
+@layer base {
+  * {
+    border-color: hsl(var(--border));
+  }
+  body {
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: hsl(var(--border));
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--muted-foreground));
+}
+
+/* Tabular numbers for financial data */
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: 'tnum';
+}
+
+/* Smooth fade-in for page transitions */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-in {
+  animation: fadeIn 0.3s ease-out;
+}
+
+/* Sparkline hover */
+.recharts-surface {
+  overflow: visible;
+}
+
+/* Hide number input spinners */
+input[type='number']::-webkit-outer-spin-button,
+input[type='number']::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type='number'] {
+  -moz-appearance: textfield;
+}
