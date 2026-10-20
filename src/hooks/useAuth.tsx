@@ -6,8 +6,8 @@ interface AuthContextValue {
   session: Session | null;
   user: User | null;
   loading: boolean;
-  signIn: (email: string, password: string) => Promise<{ error: string | null }>;
-  signUp: (email: string, password: string) => Promise<{ error: string | null }>;
+  sendOtp: (email: string) => Promise<{ error: string | null }>;
+  verifyOtp: (email: string, token: string) => Promise<{ error: string | null }>;
   signOut: () => Promise<void>;
   deleteAccount: () => Promise<{ error: string | null }>;
 }
@@ -37,13 +37,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     };
   }, []);
 
-  const signIn = async (email: string, password: string) => {
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
+  const sendOtp = async (email: string) => {
+    const { error } = await supabase.auth.signInWithOtp({
+      email,
+      options: { shouldCreateUser: true },
+    });
     return { error: error?.message ?? null };
   };
 
-  const signUp = async (email: string, password: string) => {
-    const { error } = await supabase.auth.signUp({ email, password });
+  const verifyOtp = async (email: string, token: string) => {
+    const { error } = await supabase.auth.verifyOtp({
+      email,
+      token,
+      type: 'email',
+    });
     return { error: error?.message ?? null };
   };
 
@@ -55,7 +62,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (!session?.user) return { error: 'Not signed in' };
     const userId = session.user.id;
 
-    // Delete user data from all tables
     await Promise.all([
       supabase.from('watchlist_items').delete().eq('user_id', userId),
       supabase.from('watchlists').delete().eq('user_id', userId),
@@ -63,7 +69,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       supabase.from('app_settings').delete().eq('user_id', userId),
     ]);
 
-    // Delete the auth user via admin API (requires service role - use edge function)
     const res = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/delete-account`, {
       method: 'POST',
       headers: {
@@ -82,7 +87,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{ session, user: session?.user ?? null, loading, signIn, signUp, signOut, deleteAccount }}>
+    <AuthContext.Provider value={{ session, user: session?.user ?? null, loading, sendOtp, verifyOtp, signOut, deleteAccount }}>
       {children}
     </AuthContext.Provider>
   );
