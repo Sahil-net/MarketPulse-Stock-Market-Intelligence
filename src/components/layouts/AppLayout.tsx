@@ -15,7 +15,6 @@ import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
-import { DemoBadge } from '@/components/shared/States';
 import type { Market, Currency } from '@/types';
 
 interface NavItem {
@@ -178,7 +177,7 @@ interface TopBarProps {
 
 export function TopBar({ navigate, onMobileMenu }: TopBarProps) {
   const store = useAppStore();
-  const { user, signOut } = useAuth();
+  const { signOut } = useAuth();
   const [searchQuery, setSearchQuery] = useState('');
   const [showResults, setShowResults] = useState(false);
   const debouncedQuery = useDebounce(searchQuery, 200);

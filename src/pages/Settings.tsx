@@ -9,7 +9,7 @@ import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
-import { Sun, Moon, Globe, DollarSign, Database, KeyRound, Info, LogOut, Trash2, User, Activity } from 'lucide-react';
+import { Sun, Moon, Globe, KeyRound, Info, LogOut, Trash2, User, Activity } from 'lucide-react';
 import type { Market, Currency } from '@/types';
 
 interface SettingsProps {
@@ -83,7 +83,7 @@ export function Settings({ navigate: navigateProp }: SettingsProps) {
               <SelectTrigger className="w-[100px]"><SelectValue /></SelectTrigger>
               <SelectContent>
                 <SelectItem value="USD">USD ($)</SelectItem>
-                <SelectItem value="INR">INR (\u20b9)</SelectItem>
+                <SelectItem value="INR">INR (₹)</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -197,7 +197,7 @@ export function Settings({ navigate: navigateProp }: SettingsProps) {
             stocks, ETFs, and mutual funds. It provides performance rankings, technical indicators,
             sector analysis, screeners, and portfolio tracking with real-time data.
           </p>
-          <p className="mt-2 text-xs text-muted-foreground/70">Version 2.0.0 \u00b7 Built with React, Vite, Tailwind CSS, Recharts, and Supabase</p>
+          <p className="mt-2 text-xs text-muted-foreground/70">Version 2.0.0 · Built with React, Vite, Tailwind CSS, Recharts, and Supabase</p>
         </CardContent>
       </Card>
     </div>

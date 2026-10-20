@@ -12,13 +12,14 @@ export function useStocks(market?: Market) {
 
   useEffect(() => {
     if (stocks.length === 0) return;
-    const symbols = stocks.map((s) => s.ticker).join(',');
+    const tickers = stocks.map((s) => s.ticker);
     let active = true;
-    fetchQuotes(stocks.map((s) => s.ticker)).then((quotes) => {
+    fetchQuotes(tickers).then((quotes) => {
       if (active) setLiveQuotes(quotes);
     });
     return () => { active = false; };
-  }, [symbols(stocks)]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [stocks.map((s) => s.ticker).join(',')]);
 
   const merged = useMemo(() => {
     return stocks.map((s) => {
