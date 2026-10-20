@@ -1,5 +1,6 @@
 import { useState, useMemo, useRef, useEffect } from 'react';
 import { useAppStore } from '@/hooks/useAppStore';
+import { useAuth } from '@/hooks/useAuth';
 import { useDebounce } from '@/hooks/useDebounce';
 import { useSearch } from '@/hooks/useData';
 import { cn } from '@/lib/utils';
@@ -7,7 +8,7 @@ import {
   Search, X, TrendingUp, BarChart3, Layers, PieChart, Briefcase,
   Eye, Newspaper, Settings, ChevronLeft, ChevronRight, Activity,
   ArrowUpRight, ArrowDownRight, Gauge, ListFilter, GitCompareArrows,
-  Menu, Sun, Moon, Wallet, Radio, LineChart,
+  Menu, Sun, Moon, LogOut, Radio, LineChart, Zap,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
@@ -177,6 +178,7 @@ interface TopBarProps {
 
 export function TopBar({ navigate, onMobileMenu }: TopBarProps) {
   const store = useAppStore();
+  const { user, signOut } = useAuth();
   const [searchQuery, setSearchQuery] = useState('');
   const [showResults, setShowResults] = useState(false);
   const debouncedQuery = useDebounce(searchQuery, 200);
@@ -257,12 +259,10 @@ export function TopBar({ navigate, onMobileMenu }: TopBarProps) {
       {/* Right section */}
       <div className="ml-auto flex items-center gap-2">
         {/* Data freshness */}
-        <div className="hidden items-center gap-1.5 rounded-lg border border-border bg-muted/30 px-2.5 py-1.5 sm:flex">
-          <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-success" />
-          <span className="text-xs text-muted-foreground">Data delayed</span>
+        <div className="hidden items-center gap-1.5 rounded-lg border border-success/30 bg-success/5 px-2.5 py-1.5 sm:flex">
+          <Zap className="h-3 w-3 text-success" />
+          <span className="text-xs text-success font-medium">Live</span>
         </div>
-
-        <DemoBadge className="hidden md:inline-flex" />
 
         {/* Market selector */}
         <Select value={store.market} onValueChange={(v: Market) => store.setMarket(v)}>
@@ -298,7 +298,12 @@ export function TopBar({ navigate, onMobileMenu }: TopBarProps) {
 
         {/* Account */}
         <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => navigate('/settings')}>
-          <Wallet className="h-4 w-4" />
+          <Settings className="h-4 w-4" />
+        </Button>
+
+        {/* Sign out */}
+        <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => signOut()}>
+          <LogOut className="h-4 w-4" />
         </Button>
       </div>
     </header>

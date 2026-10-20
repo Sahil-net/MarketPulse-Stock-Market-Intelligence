@@ -1,12 +1,15 @@
+import { useState } from 'react';
 import { useAppStore } from '@/hooks/useAppStore';
-import { PageHeader, DemoBadge } from '@/components/shared/States';
+import { useAuth } from '@/hooks/useAuth';
+import { PageHeader } from '@/components/shared/States';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
-import { Sun, Moon, Globe, DollarSign, Database, KeyRound, Info } from 'lucide-react';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
+import { Sun, Moon, Globe, DollarSign, Database, KeyRound, Info, LogOut, Trash2, User, Activity } from 'lucide-react';
 import type { Market, Currency } from '@/types';
 
 interface SettingsProps {
@@ -15,12 +18,44 @@ interface SettingsProps {
 
 export function Settings({ navigate: navigateProp }: SettingsProps) {
   const store = useAppStore();
+  const { user, signOut, deleteAccount } = useAuth();
+  const [deleting, setDeleting] = useState(false);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
+
+  async function handleDeleteAccount() {
+    setDeleting(true);
+    setDeleteError(null);
+    const { error } = await deleteAccount();
+    setDeleting(false);
+    if (error) {
+      setDeleteError(error);
+    }
+  }
 
   return (
     <div className="animate-fade-in space-y-4 max-w-2xl">
-      <PageHeader title="Settings" description="Customize your MarketPulse experience">
-        <DemoBadge />
-      </PageHeader>
+      <PageHeader title="Settings" description="Customize your MarketPulse experience" />
+
+      <Card>
+        <CardHeader className="pb-3"><CardTitle className="text-base flex items-center gap-2"><User className="h-4 w-4 text-primary" />Account</CardTitle></CardHeader>
+        <CardContent className="space-y-3">
+          <div className="flex items-center justify-between text-sm">
+            <span className="text-muted-foreground">Signed in as</span>
+            <span className="text-foreground font-medium">{user?.email}</span>
+          </div>
+          <Separator />
+          <div className="flex items-center justify-between">
+            <div>
+              <Label>Sign Out</Label>
+              <p className="text-xs text-muted-foreground">Sign out of your account on this device</p>
+            </div>
+            <Button variant="outline" size="sm" onClick={() => signOut()}>
+              <LogOut className="h-4 w-4 mr-2" />
+              Sign Out
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
 
       <Card>
         <CardHeader className="pb-3"><CardTitle className="text-base flex items-center gap-2"><Globe className="h-4 w-4 text-primary" />Market & Currency</CardTitle></CardHeader>
@@ -48,7 +83,7 @@ export function Settings({ navigate: navigateProp }: SettingsProps) {
               <SelectTrigger className="w-[100px]"><SelectValue /></SelectTrigger>
               <SelectContent>
                 <SelectItem value="USD">USD ($)</SelectItem>
-                <SelectItem value="INR">INR (₹)</SelectItem>
+                <SelectItem value="INR">INR (\u20b9)</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -69,31 +104,28 @@ export function Settings({ navigate: navigateProp }: SettingsProps) {
       </Card>
 
       <Card>
-        <CardHeader className="pb-3"><CardTitle className="text-base flex items-center gap-2"><Database className="h-4 w-4 text-primary" />Data Provider</CardTitle></CardHeader>
+        <CardHeader className="pb-3"><CardTitle className="text-base flex items-center gap-2"><Activity className="h-4 w-4 text-primary" />Real-Time Data</CardTitle></CardHeader>
         <CardContent className="space-y-3">
-          <div className="rounded-lg border border-warning/30 bg-warning/5 p-3">
+          <div className="rounded-lg border border-success/30 bg-success/5 p-3">
             <div className="flex items-center gap-2 mb-1">
-              <Info className="h-4 w-4 text-warning" />
-              <span className="text-sm font-medium text-warning">Demo Mode Active</span>
+              <Info className="h-4 w-4 text-success" />
+              <span className="text-sm font-medium text-success">Live Data Enabled</span>
             </div>
             <p className="text-xs text-muted-foreground">
-              The app is currently running with demo data. To connect a real financial data provider
-              (Alpha Vantage, Finnhub, Twelve Data, etc.), add the API key to your environment variables
-              and configure the provider in the data service layer.
+              Real-time stock quotes, price history, and market news are fetched live
+              from Finnhub. Market data for ETFs and mutual funds continues to use
+              built-in data. To activate live data, add your Finnhub API key as
+              FINNHUB_API_KEY in the edge function secrets.
             </p>
           </div>
           <div className="space-y-2">
             <div className="flex items-center justify-between text-sm">
               <span className="text-muted-foreground">Data Source</span>
-              <span className="text-foreground">Demo / Sample Data</span>
+              <span className="text-foreground">Finnhub (Live) + Built-in</span>
             </div>
             <div className="flex items-center justify-between text-sm">
               <span className="text-muted-foreground">Update Frequency</span>
-              <span className="text-foreground">On load</span>
-            </div>
-            <div className="flex items-center justify-between text-sm">
-              <span className="text-muted-foreground">Caching</span>
-              <span className="text-foreground">Not configured</span>
+              <span className="text-foreground">Real-time on page load</span>
             </div>
           </div>
         </CardContent>
@@ -104,14 +136,56 @@ export function Settings({ navigate: navigateProp }: SettingsProps) {
         <CardContent className="space-y-3">
           <div className="rounded-lg border border-border bg-muted/30 p-3">
             <p className="text-sm text-muted-foreground">
-              Watchlists and portfolio holdings are currently saved locally in your browser.
-              To enable cloud sync and authentication, connect a Supabase project by adding
-              your Supabase URL and keys to the environment variables.
+              Your watchlists, portfolio holdings, and settings are saved to your account
+              and sync across devices. Market data is fetched live when available.
             </p>
           </div>
-          <Button variant="outline" size="sm" onClick={() => navigateProp('/watchlists')}>Manage Watchlists</Button>
-          <span className="mx-2 text-muted-foreground">·</span>
-          <Button variant="outline" size="sm" onClick={() => navigateProp('/portfolio')}>View Portfolio</Button>
+          <div className="flex items-center gap-2">
+            <Button variant="outline" size="sm" onClick={() => navigateProp('/watchlists')}>Manage Watchlists</Button>
+            <Button variant="outline" size="sm" onClick={() => navigateProp('/portfolio')}>View Portfolio</Button>
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card className="border-destructive/30">
+        <CardHeader className="pb-3"><CardTitle className="text-base flex items-center gap-2 text-destructive"><Trash2 className="h-4 w-4" />Danger Zone</CardTitle></CardHeader>
+        <CardContent className="space-y-3">
+          <div className="rounded-lg border border-destructive/20 bg-destructive/5 p-3">
+            <p className="text-sm text-muted-foreground">
+              Permanently delete your account and all associated data including watchlists,
+              portfolio holdings, and settings. This action cannot be undone.
+            </p>
+          </div>
+          {deleteError && (
+            <div className="rounded-lg border border-destructive/30 bg-destructive/5 p-3 text-sm text-destructive">
+              {deleteError}
+            </div>
+          )}
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button variant="destructive" size="sm" disabled={deleting}>
+                <Trash2 className="h-4 w-4 mr-2" />
+                {deleting ? 'Deleting...' : 'Delete Account'}
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Delete your account?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  This will permanently erase your account and all data — watchlists, portfolio holdings, and settings. You will be signed out immediately. This cannot be reversed.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogAction
+                  onClick={handleDeleteAccount}
+                  className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                >
+                  Yes, delete everything
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         </CardContent>
       </Card>
 
@@ -120,11 +194,10 @@ export function Settings({ navigate: navigateProp }: SettingsProps) {
         <CardContent>
           <p className="text-sm text-muted-foreground leading-relaxed">
             MarketPulse is a stock market intelligence platform for discovering and analyzing
- stocks, ETFs, and mutual funds. It provides performance rankings, technical indicators,
- sector analysis, screeners, and portfolio tracking. All data shown is demo data for
- illustration purposes and should not be used for investment decisions.
+            stocks, ETFs, and mutual funds. It provides performance rankings, technical indicators,
+            sector analysis, screeners, and portfolio tracking with real-time data.
           </p>
-          <p className="mt-2 text-xs text-muted-foreground/70">Version 1.0.0 · Built with React, Vite, Tailwind CSS, and Recharts</p>
+          <p className="mt-2 text-xs text-muted-foreground/70">Version 2.0.0 \u00b7 Built with React, Vite, Tailwind CSS, Recharts, and Supabase</p>
         </CardContent>
       </Card>
     </div>

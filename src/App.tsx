@@ -2,8 +2,10 @@ import { useState, useEffect, useMemo } from 'react';
 import './App.css';
 import { useRouter } from '@/hooks/useRouter';
 import { useAppStore } from '@/hooks/useAppStore';
+import { AuthProvider, useAuth } from '@/hooks/useAuth';
 import { Sidebar, TopBar } from '@/components/layouts/AppLayout';
 import { ErrorState } from '@/components/shared/States';
+import { AuthPage } from '@/pages/AuthPage';
 
 import { MarketOverview } from '@/pages/MarketOverview';
 import { StocksExplorer } from '@/pages/StocksExplorer';
@@ -22,14 +24,37 @@ import { Settings } from '@/pages/Settings';
 import { StockDetail } from '@/pages/StockDetail';
 import { ETFDetail } from '@/pages/ETFDetail';
 import { MutualFundDetail } from '@/pages/MutualFundDetail';
+import { Radio } from 'lucide-react';
 
-function App() {
+function AppContent() {
+  const { user, loading } = useAuth();
+
+  if (loading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-background">
+        <div className="flex flex-col items-center gap-3">
+          <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/15 animate-pulse">
+            <Radio className="h-7 w-7 text-primary" />
+          </div>
+          <p className="text-sm text-muted-foreground">Loading MarketPulse...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return <AuthPage />;
+  }
+
+  return <MainApp />;
+}
+
+function MainApp() {
   const { route, navigate } = useRouter();
   const store = useAppStore();
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
 
-  // Apply theme class to html element
   useEffect(() => {
     const html = document.documentElement;
     if (store.theme === 'dark') {
@@ -42,7 +67,6 @@ function App() {
   }, [store.theme]);
 
   const page = useMemo(() => {
-    // Route matching
     if (route === '/' || route === '') return <MarketOverview navigate={navigate} />;
     if (route === '/stocks') return <StocksExplorer navigate={navigate} />;
     if (route.startsWith('/stock/')) {
@@ -90,6 +114,14 @@ function App() {
         </main>
       </div>
     </div>
+  );
+}
+
+function App() {
+  return (
+    <AuthProvider>
+      <AppContent />
+    </AuthProvider>
   );
 }
 

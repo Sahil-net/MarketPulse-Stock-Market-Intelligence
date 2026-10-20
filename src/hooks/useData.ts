@@ -1,16 +1,73 @@
-import { useMemo } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import {
   getStocks, getETFs, getMutualFunds, getIndices, getSectors, getNews,
   searchAllAssets, getStock, getETF, getMutualFund, getAllSectors, getExchanges,
 } from '@/services/mockData';
-import type { Market } from '@/types';
+import { fetchQuote, fetchQuotes, type RealtimeQuote } from '@/services/marketDataApi';
+import type { Market, Stock } from '@/types';
 
 export function useStocks(market?: Market) {
-  return useMemo(() => getStocks(market), [market]);
+  const [liveQuotes, setLiveQuotes] = useState<Record<string, RealtimeQuote | null>>({});
+  const stocks = useMemo(() => getStocks(market), [market]);
+
+  useEffect(() => {
+    if (stocks.length === 0) return;
+    const symbols = stocks.map((s) => s.ticker).join(',');
+    let active = true;
+    fetchQuotes(stocks.map((s) => s.ticker)).then((quotes) => {
+      if (active) setLiveQuotes(quotes);
+    });
+    return () => { active = false; };
+  }, [symbols(stocks)]);
+
+  const merged = useMemo(() => {
+    return stocks.map((s) => {
+      const live = liveQuotes[s.ticker];
+      if (live) {
+        return {
+          ...s,
+          price: live.currentPrice,
+          change: live.change,
+          changePct: live.changePct,
+          prevClose: live.prevClose,
+          high52: Math.max(s.high52, live.high),
+          low52: Math.min(s.low52, live.low),
+        };
+      }
+      return s;
+    });
+  }, [stocks, liveQuotes]);
+
+  return merged;
 }
 
 export function useStock(ticker: string) {
-  return useMemo(() => getStock(ticker), [ticker]);
+  const [liveQuote, setLiveQuote] = useState<RealtimeQuote | null>(null);
+  const stock = useMemo(() => getStock(ticker), [ticker]);
+
+  useEffect(() => {
+    let active = true;
+    fetchQuote(ticker).then((q) => {
+      if (active) setLiveQuote(q);
+    });
+    return () => { active = false; };
+  }, [ticker]);
+
+  return useMemo<Stock | null>(() => {
+    if (!stock) return null;
+    if (liveQuote) {
+      return {
+        ...stock,
+        price: liveQuote.currentPrice,
+        change: liveQuote.change,
+        changePct: liveQuote.changePct,
+        prevClose: liveQuote.prevClose,
+        high52: Math.max(stock.high52, liveQuote.high),
+        low52: Math.min(stock.low52, liveQuote.low),
+      };
+    }
+    return stock;
+  }, [stock, liveQuote]);
 }
 
 export function useETFs(market?: Market) {
