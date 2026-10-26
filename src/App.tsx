@@ -76,8 +76,11 @@ function MainApp({ onOpenAuth }: MainAppProps) {
   }, [store.theme]);
 
   useEffect(() => {
-    if (!user) {
-      const timer = setTimeout(() => onOpenAuth(), 3000);
+    if (!user && !sessionStorage.getItem('authPromptShown')) {
+      const timer = setTimeout(() => {
+        onOpenAuth();
+        sessionStorage.setItem('authPromptShown', '1');
+      }, 3000);
       return () => clearTimeout(timer);
     }
   }, [user, onOpenAuth]);
