@@ -5,7 +5,7 @@ import { useAppStore } from '@/hooks/useAppStore';
 import { AuthProvider, useAuth } from '@/hooks/useAuth';
 import { Sidebar, TopBar } from '@/components/layouts/AppLayout';
 import { ErrorState } from '@/components/shared/States';
-import { AuthPage } from '@/pages/AuthPage';
+import { AuthModal } from '@/components/shared/AuthModal';
 
 import { MarketOverview } from '@/pages/MarketOverview';
 import { StocksExplorer } from '@/pages/StocksExplorer';
@@ -25,9 +25,12 @@ import { StockDetail } from '@/pages/StockDetail';
 import { ETFDetail } from '@/pages/ETFDetail';
 import { MutualFundDetail } from '@/pages/MutualFundDetail';
 import { Radio } from 'lucide-react';
+import { Dashboard } from '@/pages/Dashboard';
+import { TermsOfService } from '@/pages/TermsOfService';
 
 function AppContent() {
-  const { user, loading } = useAuth();
+  const { loading } = useAuth();
+  const [authModalOpen, setAuthModalOpen] = useState(false);
 
   if (loading) {
     return (
@@ -42,16 +45,22 @@ function AppContent() {
     );
   }
 
-  if (!user) {
-    return <AuthPage />;
-  }
-
-  return <MainApp />;
+  return (
+    <>
+      <MainApp onOpenAuth={() => setAuthModalOpen(true)} />
+      <AuthModal open={authModalOpen} onClose={() => setAuthModalOpen(false)} />
+    </>
+  );
 }
 
-function MainApp() {
+interface MainAppProps {
+  onOpenAuth: () => void;
+}
+
+function MainApp({ onOpenAuth }: MainAppProps) {
   const { route, navigate } = useRouter();
   const store = useAppStore();
+  const { user } = useAuth();
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -66,8 +75,19 @@ function MainApp() {
     }
   }, [store.theme]);
 
+  useEffect(() => {
+    if (!user) {
+      const timer = setTimeout(() => onOpenAuth(), 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [user, onOpenAuth]);
+
+  const isGuest = !user;
+
   const page = useMemo(() => {
     if (route === '/' || route === '') return <MarketOverview navigate={navigate} />;
+    if (route === '/dashboard') return isGuest ? <GuestPrompt navigate={navigate} onOpenAuth={onOpenAuth} /> : <Dashboard navigate={navigate} />;
+    if (route === '/terms') return <TermsOfService navigate={navigate} />;
     if (route === '/stocks') return <StocksExplorer navigate={navigate} />;
     if (route.startsWith('/stock/')) {
       const ticker = route.replace('/stock/', '');
@@ -90,12 +110,12 @@ function MainApp() {
     if (route === '/stock-screener') return <StockScreener navigate={navigate} />;
     if (route === '/fund-screener') return <FundScreener navigate={navigate} />;
     if (route === '/comparison') return <AssetComparison navigate={navigate} />;
-    if (route === '/watchlists') return <Watchlists navigate={navigate} />;
-    if (route === '/portfolio') return <Portfolio navigate={navigate} />;
+    if (route === '/watchlists') return isGuest ? <GuestPrompt navigate={navigate} onOpenAuth={onOpenAuth} /> : <Watchlists navigate={navigate} />;
+    if (route === '/portfolio') return isGuest ? <GuestPrompt navigate={navigate} onOpenAuth={onOpenAuth} /> : <Portfolio navigate={navigate} />;
     if (route === '/news') return <MarketNews navigate={navigate} />;
-    if (route === '/settings') return <Settings navigate={navigate} />;
+    if (route === '/settings') return isGuest ? <GuestPrompt navigate={navigate} onOpenAuth={onOpenAuth} /> : <Settings navigate={navigate} />;
     return <ErrorState message={`Page not found: ${route}`} onRetry={() => navigate('/')} />;
-  }, [route, navigate]);
+  }, [route, navigate, isGuest, onOpenAuth]);
 
   return (
     <div className="min-h-screen bg-background">
@@ -108,10 +128,38 @@ function MainApp() {
         onMobileClose={() => setMobileOpen(false)}
       />
       <div className={`flex flex-col transition-all duration-300 ${collapsed ? 'lg:ml-16' : 'lg:ml-60'}`}>
-        <TopBar route={route} navigate={navigate} onMobileMenu={() => setMobileOpen(true)} />
+        <TopBar route={route} navigate={navigate} onMobileMenu={() => setMobileOpen(true)} onOpenAuth={onOpenAuth} />
         <main className="flex-1 p-4 lg:p-6">
           {page}
         </main>
+      </div>
+    </div>
+  );
+}
+
+function GuestPrompt({ navigate, onOpenAuth }: { navigate: (path: string) => void; onOpenAuth: () => void }) {
+  return (
+    <div className="flex flex-col items-center justify-center py-20 text-center">
+      <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10">
+        <Radio className="h-7 w-7 text-primary" />
+      </div>
+      <h2 className="mt-4 text-xl font-semibold text-foreground">Create an account to continue</h2>
+      <p className="mt-2 max-w-md text-sm text-muted-foreground">
+        This area requires an account. Sign in or create one to save your watchlists, track your portfolio, and sync across devices.
+      </p>
+      <div className="mt-6 flex items-center gap-3">
+        <button
+          onClick={onOpenAuth}
+          className="rounded-lg bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+        >
+          Sign in / Sign up
+        </button>
+        <button
+          onClick={() => navigate('/')}
+          className="rounded-lg border border-border px-5 py-2.5 text-sm font-medium text-foreground transition-colors hover:bg-muted/40"
+        >
+          Back to markets
+        </button>
       </div>
     </div>
   );

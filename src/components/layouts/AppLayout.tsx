@@ -8,7 +8,7 @@ import {
   Search, X, TrendingUp, BarChart3, Layers, PieChart, Briefcase,
   Eye, Newspaper, Settings, ChevronLeft, ChevronRight, Activity,
   ArrowUpRight, ArrowDownRight, Gauge, ListFilter, GitCompareArrows,
-  Menu, Sun, Moon, LogOut, Radio, LineChart, Zap,
+  Menu, Sun, Moon, LogOut, Radio, LineChart, Zap, LayoutDashboard, FileText, LogIn,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
@@ -25,6 +25,7 @@ interface NavItem {
 }
 
 const NAV_ITEMS: NavItem[] = [
+  { path: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { path: '/', label: 'Market Overview', icon: Activity },
   { path: '/stocks', label: 'Stocks Explorer', icon: TrendingUp },
   { path: '/gainers', label: 'Top Gainers', icon: ArrowUpRight },
@@ -39,6 +40,7 @@ const NAV_ITEMS: NavItem[] = [
   { path: '/watchlists', label: 'Watchlists', icon: Eye },
   { path: '/portfolio', label: 'Portfolio Tracker', icon: Briefcase },
   { path: '/news', label: 'Market News', icon: Newspaper },
+  { path: '/terms', label: 'Terms of Service', icon: FileText },
   { path: '/settings', label: 'Settings', icon: Settings },
 ];
 
@@ -46,9 +48,10 @@ const NAV_GROUPS = ['Markets', 'Explorers', 'Tools', 'Personal'];
 
 function getGroup(item: NavItem): string {
   const idx = NAV_ITEMS.indexOf(item);
-  if (idx <= 3) return 'Markets';
-  if (idx <= 7) return 'Explorers';
-  if (idx <= 10) return 'Tools';
+  if (idx <= 0) return 'Personal';
+  if (idx <= 4) return 'Markets';
+  if (idx <= 8) return 'Explorers';
+  if (idx <= 11) return 'Tools';
   return 'Personal';
 }
 
@@ -173,11 +176,12 @@ interface TopBarProps {
   route: string;
   navigate: (path: string) => void;
   onMobileMenu: () => void;
+  onOpenAuth: () => void;
 }
 
-export function TopBar({ navigate, onMobileMenu }: TopBarProps) {
+export function TopBar({ navigate, onMobileMenu, onOpenAuth }: TopBarProps) {
   const store = useAppStore();
-  const { signOut } = useAuth();
+  const { user, signOut } = useAuth();
   const [searchQuery, setSearchQuery] = useState('');
   const [showResults, setShowResults] = useState(false);
   const debouncedQuery = useDebounce(searchQuery, 200);
@@ -296,14 +300,21 @@ export function TopBar({ navigate, onMobileMenu }: TopBarProps) {
         </Button>
 
         {/* Account */}
-        <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => navigate('/settings')}>
-          <Settings className="h-4 w-4" />
-        </Button>
-
-        {/* Sign out */}
-        <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => signOut()}>
-          <LogOut className="h-4 w-4" />
-        </Button>
+        {user ? (
+          <>
+            <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => navigate('/settings')}>
+              <Settings className="h-4 w-4" />
+            </Button>
+            <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => signOut()}>
+              <LogOut className="h-4 w-4" />
+            </Button>
+          </>
+        ) : (
+          <Button size="sm" className="h-8" onClick={onOpenAuth}>
+            <LogIn className="h-4 w-4 mr-1.5" />
+            Sign in
+          </Button>
+        )}
       </div>
     </header>
   );
