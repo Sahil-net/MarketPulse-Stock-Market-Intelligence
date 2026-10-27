@@ -158,12 +158,11 @@ export function useAppStore() {
   }, [user]);
 
   const setMarket = useCallback((market: Market) => {
-    const currency = market === 'IN' ? 'INR' : 'USD';
-    setState({ ...currentState, market, currency });
+    setState({ ...currentState, market });
     supabase.from('app_settings').upsert({
       id: currentState.settingsId,
       market,
-      currency,
+      currency: currentState.currency,
       theme: currentState.theme,
     }).then();
   }, []);

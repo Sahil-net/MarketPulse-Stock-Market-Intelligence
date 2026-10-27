@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react';
-import { useStocks, useETFs, useMutualFunds, useSectors } from '@/hooks/useData';
+import { useStocks, useETFs, useSectors } from '@/hooks/useData';
 import { useAppStore } from '@/hooks/useAppStore';
 import { DataTable, type Column } from '@/components/shared/DataTable';
 import { ChangeBadge } from '@/components/shared/ChangeBadge';
@@ -12,7 +12,7 @@ import { exportToCSV } from '@/lib/csv';
 import { calculateReturn } from '@/services/technicalAnalysis';
 import { formatPrice, formatPercent, formatVolume } from '@/lib/format';
 import { Download } from 'lucide-react';
-import type { PeriodKey, Stock, ETF, MutualFund } from '@/types';
+import type { PeriodKey, Stock, ETF } from '@/types';
 
 interface RankingsProps {
   navigate: (path: string) => void;
@@ -26,11 +26,10 @@ export function Rankings({ navigate, mode }: RankingsProps) {
   const store = useAppStore();
   const stocks = useStocks(store.market);
   const etfs = useETFs(store.market);
-  const funds = useMutualFunds();
   const sectors = useSectors(store.market);
 
   const [period, setPeriod] = useState<PeriodKey>('1M');
-  const [assetType, setAssetType] = useState<'stocks' | 'etfs' | 'funds' | 'sectors'>('stocks');
+  const [assetType, setAssetType] = useState<'stocks' | 'etfs' | 'sectors'>('stocks');
 
   const periodDays = period === 'YTD' ? Math.floor((Date.now() - new Date(new Date().getFullYear(), 0, 1).getTime()) / 86400000) : PERIOD_DAYS[period];
 
@@ -54,20 +53,12 @@ export function Rankings({ navigate, mode }: RankingsProps) {
       .sort((a, b) => mode === 'gainers' ? b.returnPct - a.returnPct : a.returnPct - b.returnPct);
   }, [etfs, periodDays, mode]);
 
-  const fundResults = useMemo(() => {
-    const retMap: Record<string, keyof typeof funds[0]['returns']> = { '1M': '1M', '3M': '3M', '6M': '6M', '1Y': '1Y', '3Y': '3Y', '5Y': '5Y' };
-    const retKey = retMap[period] ?? '1Y';
-    return funds
-      .map((f) => ({ symbol: f.id, name: f.name, type: 'mutualfund' as const, exchange: '—', startPrice: 0, endPrice: f.nav, returnPct: f.returns[retKey] ?? 0, volume: 0, currency: 'INR' as const }))
-      .sort((a, b) => mode === 'gainers' ? b.returnPct - a.returnPct : a.returnPct - b.returnPct);
-  }, [funds, period, mode]);
-
   const sectorResults = useMemo(() => {
     return sectors.map((s) => ({ symbol: s.name, name: s.name, type: 'sector' as const, exchange: '—', startPrice: 0, endPrice: 0, returnPct: s.changePct, volume: 0, currency: store.currency }))
       .sort((a, b) => mode === 'gainers' ? b.returnPct - a.returnPct : a.returnPct - b.returnPct);
   }, [sectors, mode, store.currency]);
 
-  const results = assetType === 'stocks' ? stockResults : assetType === 'etfs' ? etfResults : assetType === 'funds' ? fundResults : sectorResults;
+  const results = assetType === 'stocks' ? stockResults : assetType === 'etfs' ? etfResults : sectorResults;
 
   function handleExport() {
     exportToCSV(`${mode}-${assetType}-${period}.csv`,
@@ -88,7 +79,7 @@ export function Rankings({ navigate, mode }: RankingsProps) {
     },
     {
       key: 'type', header: 'Type', sortable: true, accessor: (r) => r.type,
-      render: (r) => <span className="text-xs uppercase text-muted-foreground">{r.type === 'mutualfund' ? 'Fund' : r.type}</span>,
+      render: (r) => <span className="text-xs uppercase text-muted-foreground">{r.type}</span>,
     },
     {
       key: 'returnPct', header: 'Return %', sortable: true, align: 'right', accessor: (r) => r.returnPct,
@@ -125,7 +116,6 @@ export function Rankings({ navigate, mode }: RankingsProps) {
               <TabsList>
                 <TabsTrigger value="stocks">Stocks</TabsTrigger>
                 <TabsTrigger value="etfs">ETFs</TabsTrigger>
-                <TabsTrigger value="funds">Funds</TabsTrigger>
                 <TabsTrigger value="sectors">Sectors</TabsTrigger>
               </TabsList>
             </Tabs>
@@ -151,7 +141,6 @@ export function Rankings({ navigate, mode }: RankingsProps) {
               onRowClick={(r) => {
                 if (r.type === 'stock') navigate(`/stock/${r.symbol}`);
                 else if (r.type === 'etf') navigate(`/etf/${r.symbol}`);
-                else if (r.type === 'mutualfund') navigate(`/mutual-fund/${r.symbol}`);
               }}
               initialSortKey="returnPct"
               initialSortDir={mode === 'gainers' ? 'desc' : 'asc'}

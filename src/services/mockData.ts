@@ -1,5 +1,5 @@
 import type {
-  Stock, ETF, MutualFund, MarketIndex, Sector, NewsItem,
+  Stock, ETF, MarketIndex, Sector, NewsItem,
   PricePoint, Market, Currency,
 } from '@/types';
 
@@ -92,29 +92,6 @@ const US_STOCK_SEEDS: StockSeed[] = [
   { ticker: 'INTC', name: 'Intel Corporation', exchange: 'NASDAQ', market: 'US', sector: 'Technology', industry: 'Semiconductors', price: 23.45, marketCap: 101e9, volume: 38.6e6, pe: 0, divYield: 1.50, beta: 1.05, currency: 'USD', description: 'Designs and manufactures computer products and technologies worldwide.', volatility: 0.03, drift: -0.0005 },
 ];
 
-const IN_STOCK_SEEDS: StockSeed[] = [
-  { ticker: 'RELIANCE', name: 'Reliance Industries Ltd.', exchange: 'NSE', market: 'IN', sector: 'Energy', industry: 'Oil & Gas Refining', price: 2945.30, marketCap: 19920e9, volume: 5.8e6, pe: 28.5, divYield: 0.45, beta: 1.15, currency: 'INR', description: 'India\'s largest private-sector company with businesses in energy, petrochemicals, retail, telecom, and digital services.' },
-  { ticker: 'TCS', name: 'Tata Consultancy Services Ltd.', exchange: 'NSE', market: 'IN', sector: 'Technology', industry: 'IT Services', price: 4185.60, marketCap: 15120e9, volume: 1.8e6, pe: 29.8, divYield: 1.58, beta: 0.85, currency: 'INR', description: 'Leading global IT services, consulting, and business solutions organization serving Fortune 500 companies.' },
-  { ticker: 'HDFCBANK', name: 'HDFC Bank Ltd.', exchange: 'NSE', market: 'IN', sector: 'Financial', industry: 'Banks', price: 1718.25, marketCap: 13050e9, volume: 8.2e6, pe: 19.2, divYield: 1.12, beta: 0.82, currency: 'INR', description: 'India\'s largest private-sector bank providing banking and financial services to millions of customers.' },
-  { ticker: 'INFY', name: 'Infosys Ltd.', exchange: 'NSE', market: 'IN', sector: 'Technology', industry: 'IT Services', price: 1842.10, marketCap: 7640e9, volume: 4.5e6, pe: 26.3, divYield: 2.15, beta: 0.95, currency: 'INR', description: 'Global digital services and consulting company helping enterprises navigate digital transformation.' },
-  { ticker: 'BHARTIARTL', name: 'Bharti Airtel Ltd.', exchange: 'NSE', market: 'IN', sector: 'Communication', industry: 'Telecom', price: 1658.40, marketCap: 9820e9, volume: 3.1e6, pe: 68.5, divYield: 0.50, beta: 1.05, currency: 'INR', description: 'Leading telecommunications company serving India and South Asia with mobile, broadband, and enterprise services.' },
-  { ticker: 'ITC', name: 'ITC Ltd.', exchange: 'NSE', market: 'IN', sector: 'Consumer Defensive', industry: 'Tobacco & FMCG', price: 468.75, marketCap: 5860e9, volume: 12.4e6, pe: 27.5, divYield: 3.18, beta: 0.70, currency: 'INR', description: 'Diversified conglomerate in FMCG, hotels, paperboards, packaging, and agribusiness.' },
-  { ticker: 'SBIN', name: 'State Bank of India', exchange: 'NSE', market: 'IN', sector: 'Financial', industry: 'Banks', price: 812.30, marketCap: 7240e9, volume: 15.6e6, pe: 10.5, divYield: 1.62, beta: 1.20, currency: 'INR', description: 'India\'s largest public-sector bank providing comprehensive banking services nationwide.' },
-  { ticker: 'LT', name: 'Larsen & Toubro Ltd.', exchange: 'NSE', market: 'IN', sector: 'Industrials', industry: 'Engineering & Construction', price: 3585.20, marketCap: 4930e9, volume: 2.1e6, pe: 35.2, divYield: 0.85, beta: 1.35, currency: 'INR', description: 'Indian multinational engaged in engineering, construction, manufacturing, and technology services.' },
-  { ticker: 'AXISBANK', name: 'Axis Bank Ltd.', exchange: 'NSE', market: 'IN', sector: 'Financial', industry: 'Banks', price: 1148.65, marketCap: 3540e9, volume: 6.8e6, pe: 13.8, divYield: 0.15, beta: 1.25, currency: 'INR', description: 'Private-sector bank offering comprehensive financial services across India.' },
-  { ticker: 'MARUTI', name: 'Maruti Suzuki India Ltd.', exchange: 'NSE', market: 'IN', sector: 'Consumer Cyclical', industry: 'Auto Manufacturers', price: 12420.50, marketCap: 39000e9, volume: 0.4e6, pe: 27.8, divYield: 1.05, beta: 1.10, currency: 'INR', description: 'India\'s largest car manufacturer producing a wide range of passenger vehicles.' },
-  { ticker: 'SUNPHARMA', name: 'Sun Pharmaceutical Industries Ltd.', exchange: 'NSE', market: 'IN', sector: 'Healthcare', industry: 'Drug Manufacturers', price: 1782.90, marketCap: 4270e9, volume: 1.5e6, pe: 38.5, divYield: 0.58, beta: 0.88, currency: 'INR', description: 'Largest pharmaceutical company in India with global presence in specialty generics and APIs.' },
-  { ticker: 'WIPRO', name: 'Wipro Ltd.', exchange: 'NSE', market: 'IN', sector: 'Technology', industry: 'IT Services', price: 538.42, marketCap: 2820e9, volume: 5.3e6, pe: 24.5, divYield: 0.32, beta: 1.00, currency: 'INR', description: 'Global IT services company providing digital transformation, consulting, and business process services.' },
-  { ticker: 'TATAMOTORS', name: 'Tata Motors Ltd.', exchange: 'NSE', market: 'IN', sector: 'Consumer Cyclical', industry: 'Auto Manufacturers', price: 935.80, marketCap: 3450e9, volume: 9.2e6, pe: 11.2, divYield: 0.42, beta: 1.75, currency: 'INR', description: 'Automotive manufacturer producing cars, utility vehicles, trucks, buses, and luxury vehicles (JLR).' },
-  { ticker: 'HINDUNILVR', name: 'Hindustan Unilever Ltd.', exchange: 'NSE', market: 'IN', sector: 'Consumer Defensive', industry: 'Household Products', price: 2485.60, marketCap: 5840e9, volume: 1.2e6, pe: 55.8, divYield: 1.68, beta: 0.52, currency: 'INR', description: 'FMCG company with products in home care, personal care, and foods & refreshment segments.' },
-  { ticker: 'BAJFINANCE', name: 'Bajaj Finance Ltd.', exchange: 'NSE', market: 'IN', sector: 'Financial', industry: 'Credit Services', price: 7185.40, marketCap: 4460e9, volume: 1.8e6, pe: 32.5, divYield: 0.52, beta: 1.45, currency: 'INR', description: 'Non-banking financial company providing consumer and commercial lending across India.' },
-  { ticker: 'HCLTECH', name: 'HCL Technologies Ltd.', exchange: 'NSE', market: 'IN', sector: 'Technology', industry: 'IT Services', price: 1845.30, marketCap: 5000e9, volume: 3.2e6, pe: 27.2, divYield: 3.25, beta: 0.90, currency: 'INR', description: 'Global technology company providing IT and business process outsourcing services.' },
-  { ticker: 'ADANIENT', name: 'Adani Enterprises Ltd.', exchange: 'NSE', market: 'IN', sector: 'Industrials', industry: 'Conglomerate', price: 2845.70, marketCap: 3290e9, volume: 3.5e6, pe: 65.8, divYield: 0.08, beta: 1.95, currency: 'INR', description: 'Diversified conglomerate with businesses in trading, resources, logistics, energy, and agri products.', volatility: 0.035 },
-  { ticker: 'ASIANPAINT', name: 'Asian Paints Ltd.', exchange: 'NSE', market: 'IN', sector: 'Consumer Cyclical', industry: 'Building Materials', price: 2895.15, marketCap: 2775e9, volume: 1.3e6, pe: 52.3, divYield: 1.15, beta: 0.78, currency: 'INR', description: 'Largest paint company in India and Asia\'s third largest, providing decorative and industrial coatings.' },
-  { ticker: 'TITAN', name: 'Titan Company Ltd.', exchange: 'NSE', market: 'IN', sector: 'Consumer Cyclical', industry: 'Luxury Goods', price: 3385.80, marketCap: 3005e9, volume: 1.6e6, pe: 88.5, divYield: 0.32, beta: 1.08, currency: 'INR', description: 'India\'s leading manufacturer of watches, jewelry (Tanishq), and eyewear.' },
-  { ticker: 'ULTRACEMCO', name: 'UltraTech Cement Ltd.', exchange: 'NSE', market: 'IN', sector: 'Industrials', industry: 'Building Materials', price: 11245.60, marketCap: 32450e9, volume: 0.3e6, pe: 48.2, divYield: 0.42, beta: 1.15, currency: 'INR', description: 'Largest manufacturer of grey cement, ready-mix concrete, and white cement in India.' },
-];
-
 function buildStock(s: StockSeed, seed: number): Stock {
   const history = genHistory(seed, s.price, 1825, s.volatility ?? 0.025, s.drift ?? 0.0004);
   const { change, changePct, price, prevClose } = calcChange(history);
@@ -155,8 +132,7 @@ function buildStock(s: StockSeed, seed: number): Stock {
 }
 
 // Generate stocks
-const allStockSeeds = [...US_STOCK_SEEDS, ...IN_STOCK_SEEDS];
-const stocks: Stock[] = allStockSeeds.map((s, i) => buildStock(s, 1000 + i * 7));
+const stocks: Stock[] = US_STOCK_SEEDS.map((s, i) => buildStock(s, 1000 + i * 7));
 
 // ETF seeds
 interface ETFSeed {
@@ -190,18 +166,6 @@ const ETF_SEEDS: ETFSeed[] = [
   { ticker: 'VYM', name: 'Vanguard High Dividend Yield ETF', exchange: 'NYSE', market: 'US', issuer: 'Vanguard', price: 122.85, aum: 55e9, expenseRatio: 0.06, trackingIndex: 'FTSE High Dividend Yield', category: 'Dividend', yield: 2.85, inceptionDate: '2006-11-10', currency: 'USD', volume: 1.8e6, holdings: [
     { name: 'JPMorgan Chase', weight: 3.2 }, { name: 'Exxon Mobil', weight: 3.1 }, { name: 'Johnson & Johnson', weight: 2.8 }
   ], sectors: [{ sector: 'Financial', weight: 20.5 }, { sector: 'Consumer Defensive', weight: 15.2 }, { sector: 'Healthcare', weight: 13.8 }] },
-  { ticker: 'NIFTYBEES', name: 'Nippon India Nifty 50 ETF', exchange: 'NSE', market: 'IN', issuer: 'Nippon Life', price: 285.45, aum: 420e9, expenseRatio: 0.05, trackingIndex: 'NIFTY 50', category: 'Broad Market', yield: 1.15, inceptionDate: '2009-01-08', currency: 'INR', volume: 2.5e6, holdings: [
-    { name: 'Reliance Industries', weight: 9.2 }, { name: 'HDFC Bank', weight: 13.8 }, { name: 'Infosys', weight: 7.5 }, { name: 'TCS', weight: 4.2 }
-  ], sectors: [{ sector: 'Financial', weight: 28.5 }, { sector: 'Technology', weight: 18.2 }, { sector: 'Energy', weight: 12.5 }] },
-  { ticker: 'GOLDBEES', name: 'Nippon India Gold ETF', exchange: 'NSE', market: 'IN', issuer: 'Nippon Life', price: 62.18, aum: 180e9, expenseRatio: 0.50, trackingIndex: 'Domestic Gold Price', category: 'Commodity', yield: null, inceptionDate: '2007-03-15', currency: 'INR', volume: 8.5e6, holdings: [
-    { name: 'Gold (Physical)', weight: 99.5 }
-  ], sectors: [{ sector: 'Gold', weight: 99.5 }] },
-  { ticker: 'BANKBEES', name: 'Nippon India Bank ETF', exchange: 'NSE', market: 'IN', issuer: 'Nippon Life', price: 525.30, aum: 95e9, expenseRatio: 0.07, trackingIndex: 'NIFTY Bank', category: 'Sector', yield: 1.25, inceptionDate: '2011-06-22', currency: 'INR', volume: 1.8e6, holdings: [
-    { name: 'HDFC Bank', weight: 28.5 }, { name: 'ICICI Bank', weight: 22.8 }, { name: 'State Bank of India', weight: 12.5 }
-  ], sectors: [{ sector: 'Private Banks', weight: 65.2 }, { sector: 'Public Banks', weight: 28.5 }] },
-  { ticker: 'LIQUIDBEES', name: 'Nippon India Liquid ETF', exchange: 'NSE', market: 'IN', issuer: 'Nippon Life', price: 1000.15, aum: 250e9, expenseRatio: 0.05, trackingIndex: 'Nifty 1D Rate', category: 'Bond', yield: 6.85, inceptionDate: '2009-11-09', currency: 'INR', volume: 0.5e6, holdings: [
-    { name: 'Treasury Bills', weight: 85.2 }, { name: 'Commercial Paper', weight: 14.8 }
-  ], sectors: [{ sector: 'Government Securities', weight: 85.2 }, { sector: 'Corporate', weight: 14.8 }] },
 ];
 
 const etfs: ETF[] = ETF_SEEDS.map((e, i) => {
@@ -234,104 +198,6 @@ const etfs: ETF[] = ETF_SEEDS.map((e, i) => {
   };
 });
 
-// Mutual Fund seeds
-interface MFSeed {
-  name: string; amc: string; category: MutualFund['category']; plan: MutualFund['plan'];
-  option: MutualFund['option']; nav: number; expenseRatio: number; aum: number;
-  benchmark: string; riskLevel: MutualFund['riskLevel']; inceptionDate: string;
-  holdings: { name: string; weight: number }[];
-  sectors: { sector: string; weight: number }[];
-}
-
-const MF_SEEDS: MFSeed[] = [
-  { name: 'SBI Small Cap Fund', amc: 'SBI Mutual Fund', category: 'Equity', plan: 'Direct', option: 'Growth', nav: 178.32, expenseRatio: 0.68, aum: 28000e7, benchmark: 'NIFTY Smallcap 250', riskLevel: 'Very High', inceptionDate: '2009-11-09', holdings: [
-    { name: 'CMC Ltd', weight: 2.8 }, { name: 'Electronics Mart', weight: 2.5 }, { name: 'APL Apollo', weight: 2.2 }
-  ], sectors: [{ sector: 'Industrials', weight: 22.5 }, { sector: 'Consumer Cyclical', weight: 18.2 }, { sector: 'Technology', weight: 15.8 }] },
-  { name: 'HDFC Mid-Cap Opportunities Fund', amc: 'HDFC Mutual Fund', category: 'Equity', plan: 'Direct', option: 'Growth', nav: 168.45, expenseRatio: 0.85, aum: 76000e7, benchmark: 'NIFTY Midcap 150', riskLevel: 'High', inceptionDate: '2007-06-25', holdings: [
-    { name: 'Max Healthcare', weight: 3.5 }, { name: 'ICICI Bank', weight: 3.2 }, { name: 'Crompton Greaves', weight: 2.8 }
-  ], sectors: [{ sector: 'Financial', weight: 18.5 }, { sector: 'Healthcare', weight: 12.8 }, { sector: 'Industrials', weight: 12.2 }] },
-  { name: 'Axis Bluechip Fund', amc: 'Axis Mutual Fund', category: 'Equity', plan: 'Direct', option: 'Growth', nav: 62.18, expenseRatio: 0.52, aum: 55000e7, benchmark: 'NIFTY 50', riskLevel: 'High', inceptionDate: '2010-11-26', holdings: [
-    { name: 'HDFC Bank', weight: 8.5 }, { name: 'Reliance Industries', weight: 7.2 }, { name: 'TCS', weight: 5.8 }
-  ], sectors: [{ sector: 'Financial', weight: 28.5 }, { sector: 'Technology', weight: 15.2 }, { sector: 'Energy', weight: 10.8 }] },
-  { name: 'Mirae Asset Large Cap Fund', amc: 'Mirae Asset Mutual Fund', category: 'Equity', plan: 'Direct', option: 'Growth', nav: 98.55, expenseRatio: 0.53, aum: 36500e7, benchmark: 'NIFTY 100', riskLevel: 'High', inceptionDate: '2008-04-28', holdings: [
-    { name: 'HDFC Bank', weight: 7.8 }, { name: 'Reliance Industries', weight: 6.5 }, { name: 'Infosys', weight: 5.2 }
-  ], sectors: [{ sector: 'Financial', weight: 25.8 }, { sector: 'Technology', weight: 16.5 }, { sector: 'Consumer Defensive', weight: 11.2 }] },
-  { name: 'ICICI Prudential Equity & Debt Fund', amc: 'ICICI Prudential MF', category: 'Hybrid', plan: 'Direct', option: 'Growth', nav: 285.60, expenseRatio: 0.78, aum: 32000e7, benchmark: 'NIFTY 50 Hybrid Composite', riskLevel: 'High', inceptionDate: '1999-10-22', holdings: [
-    { name: 'ICICI Bank', weight: 5.2 }, { name: 'HDFC Bank', weight: 4.8 }, { name: 'Reliance Industries', weight: 3.5 }
-  ], sectors: [{ sector: 'Equity—Financial', weight: 22.5 }, { sector: 'Equity—Technology', weight: 12.8 }, { sector: 'Debt—Government', weight: 35.2 }] },
-  { name: 'SBI Equity Hybrid Fund', amc: 'SBI Mutual Fund', category: 'Hybrid', plan: 'Direct', option: 'Growth', nav: 215.40, expenseRatio: 0.72, aum: 45000e7, benchmark: 'NIFTY 50 Hybrid Composite', riskLevel: 'High', inceptionDate: '1995-05-17', holdings: [
-    { name: 'HDFC Bank', weight: 4.5 }, { name: 'Reliance Industries', weight: 3.8 }, { name: 'ICICI Bank', weight: 3.2 }
-  ], sectors: [{ sector: 'Equity—Financial', weight: 18.5 }, { sector: 'Debt—Corporate', weight: 32.8 }, { sector: 'Equity—Technology', weight: 10.2 }] },
-  { name: 'ICICI Prudential Liquid Fund', amc: 'ICICI Prudential MF', category: 'Liquid', plan: 'Direct', option: 'Growth', nav: 3785.25, expenseRatio: 0.20, aum: 280000e7, benchmark: 'CRISIL Liquid Fund Index', riskLevel: 'Low', inceptionDate: '1999-04-09', holdings: [
-    { name: 'T-Bills', weight: 45.2 }, { name: 'Commercial Paper', weight: 28.5 }, { name: 'Certificates of Deposit', weight: 18.8 }
-  ], sectors: [{ sector: 'Government Securities', weight: 45.2 }, { sector: 'Corporate Debt', weight: 47.3 }] },
-  { name: 'Nippon India Nifty 50 Index Fund', amc: 'Nippon Life Mutual Fund', category: 'Index', plan: 'Direct', option: 'Growth', nav: 285.18, expenseRatio: 0.20, aum: 18500e7, benchmark: 'NIFTY 50', riskLevel: 'High', inceptionDate: '2001-09-26', holdings: [
-    { name: 'HDFC Bank', weight: 13.8 }, { name: 'Reliance Industries', weight: 9.2 }, { name: 'Infosys', weight: 7.5 }
-  ], sectors: [{ sector: 'Financial', weight: 28.5 }, { sector: 'Technology', weight: 18.2 }, { sector: 'Energy', weight: 12.5 }] },
-  { name: 'HDFC Index Fund—Nifty 50 Plan', amc: 'HDFC Mutual Fund', category: 'Index', plan: 'Direct', option: 'Growth', nav: 195.82, expenseRatio: 0.20, aum: 12000e7, benchmark: 'NIFTY 50', riskLevel: 'High', inceptionDate: '2002-07-15', holdings: [
-    { name: 'HDFC Bank', weight: 13.5 }, { name: 'Reliance Industries', weight: 9.0 }, { name: 'Infosys', weight: 7.8 }
-  ], sectors: [{ sector: 'Financial', weight: 28.2 }, { sector: 'Technology', weight: 18.5 }, { sector: 'Energy', weight: 12.8 }] },
-  { name: 'Mirae Asset Tax Saver Fund', amc: 'Mirae Asset Mutual Fund', category: 'ELSS', plan: 'Direct', option: 'Growth', nav: 42.15, expenseRatio: 0.56, aum: 28000e7, benchmark: 'NIFTY 50', riskLevel: 'High', inceptionDate: '2015-12-28', holdings: [
-    { name: 'HDFC Bank', weight: 6.8 }, { name: 'Reliance Industries', weight: 5.5 }, { name: 'Axis Bank', weight: 4.2 }
-  ], sectors: [{ sector: 'Financial', weight: 25.5 }, { sector: 'Technology', weight: 14.8 }, { sector: 'Consumer Cyclical', weight: 12.5 }] },
-  { name: 'ICICI Prudential Corporate Bond Fund', amc: 'ICICI Prudential MF', category: 'Debt', plan: 'Direct', option: 'Growth', nav: 28.92, expenseRatio: 0.30, aum: 85000e7, benchmark: 'CRISIL Corporate Bond Index', riskLevel: 'Moderate', inceptionDate: '2014-01-09', holdings: [
-    { name: 'HDFC Bank NCDs', weight: 8.5 }, { name: 'Reliance Industries NCDs', weight: 6.2 }, { name: 'Tata Capital NCDs', weight: 5.8 }
-  ], sectors: [{ sector: 'AAA Corporate', weight: 72.5 }, { sector: 'AA+ Corporate', weight: 15.8 }, { sector: 'Government', weight: 8.2 }] },
-  { name: 'SBI Magnum Gilt Fund', amc: 'SBI Mutual Fund', category: 'Debt', plan: 'Direct', option: 'Growth', nav: 88.45, expenseRatio: 0.79, aum: 3200e7, benchmark: 'CRISIL Gilt Index', riskLevel: 'Moderate', inceptionDate: '1992-12-28', holdings: [
-    { name: 'Government of India Securities', weight: 68.5 }, { name: 'State Government Securities', weight: 18.2 }, { name: 'T-Bills', weight: 12.5 }
-  ], sectors: [{ sector: 'Central Government', weight: 68.5 }, { sector: 'State Government', weight: 18.2 }] },
-];
-
-const mutualFunds: MutualFund[] = MF_SEEDS.map((m, i) => {
-  const rng = seeded(7000 + i * 17);
-  const navHistory: { date: string; nav: number }[] = [];
-  const now = new Date();
-  let nav = m.nav * 0.5;
-  const returns = { '1M': 0, '3M': 0, '6M': 0, '1Y': 0, '3Y': 0, '5Y': 0 };
-  for (let d = 1825; d >= 0; d--) {
-    const date = new Date(now);
-    date.setDate(date.getDate() - d);
-    nav = nav * (1 + (rng() - 0.45) * 0.02);
-    navHistory.push({ date: date.toISOString().split('T')[0], nav: +nav.toFixed(4) });
-  }
-  // normalize
-  const ratio = m.nav / navHistory[navHistory.length - 1].nav;
-  navHistory.forEach((p) => (p.nav = +(p.nav * ratio).toFixed(4)));
-
-  const getNavAt = (days: number) => {
-    const idx = navHistory.length - 1 - days;
-    return idx >= 0 ? navHistory[idx].nav : navHistory[0].nav;
-  };
-  const current = m.nav;
-  returns['1M'] = +((current / getNavAt(30) - 1) * 100).toFixed(2);
-  returns['3M'] = +((current / getNavAt(90) - 1) * 100).toFixed(2);
-  returns['6M'] = +((current / getNavAt(180) - 1) * 100).toFixed(2);
-  returns['1Y'] = +((current / getNavAt(365) - 1) * 100).toFixed(2);
-  returns['3Y'] = +((Math.pow(current / getNavAt(1095), 1 / 3) - 1) * 100).toFixed(2);
-  returns['5Y'] = +((Math.pow(current / getNavAt(1825), 1 / 5) - 1) * 100).toFixed(2);
-
-  return {
-    id: `mf-${i}`,
-    schemeCode: `SC${100000 + i}`,
-    name: m.name,
-    amc: m.amc,
-    category: m.category,
-    plan: m.plan,
-    option: m.option,
-    nav: m.nav,
-    navDate: now.toISOString().split('T')[0],
-    expenseRatio: m.expenseRatio,
-    aum: m.aum,
-    benchmark: m.benchmark,
-    riskLevel: m.riskLevel,
-    inceptionDate: m.inceptionDate,
-    returns,
-    navHistory,
-    topHoldings: m.holdings,
-    sectorAllocation: m.sectors,
-  };
-});
-
 // Market Indices
 interface IndexSeed {
   name: string; symbol: string; market: Market; value: number;
@@ -339,10 +205,6 @@ interface IndexSeed {
 }
 
 const INDEX_SEEDS: IndexSeed[] = [
-  { name: 'NIFTY 50', symbol: 'NIFTY', market: 'IN', value: 24995.75, sessionStatus: 'closed' },
-  { name: 'NIFTY Bank', symbol: 'BANKNIFTY', market: 'IN', value: 51832.40, sessionStatus: 'closed' },
-  { name: 'NIFTY Next 50', symbol: 'NIFTYNEXT', market: 'IN', value: 65420.30, sessionStatus: 'closed' },
-  { name: 'S&P BSE SENSEX', symbol: 'SENSEX', market: 'IN', value: 81588.56, sessionStatus: 'closed' },
   { name: 'S&P 500', symbol: 'SPX', market: 'US', value: 5685.45, sessionStatus: 'closed' },
   { name: 'NASDAQ Composite', symbol: 'IXIC', market: 'US', value: 18285.20, sessionStatus: 'closed' },
   { name: 'NASDAQ-100', symbol: 'NDX', market: 'US', value: 20145.80, sessionStatus: 'closed' },
@@ -369,10 +231,9 @@ const indices: MarketIndex[] = INDEX_SEEDS.map((idx, i) => {
 });
 
 // Sectors
-function buildSectors(market: Market): Sector[] {
-  const sectorStocks = stocks.filter((s) => s.market === market);
+function buildSectors(): Sector[] {
   const sectorMap = new Map<string, Stock[]>();
-  sectorStocks.forEach((s) => {
+  stocks.forEach((s) => {
     const arr = sectorMap.get(s.sector) || [];
     arr.push(s);
     sectorMap.set(s.sector, arr);
@@ -386,7 +247,7 @@ function buildSectors(market: Market): Sector[] {
     for (let i = 0; i < 30; i++) sp.push(100 + (rng() - 0.5) * 10 + i * 0.2);
     sectors.push({
       name,
-      market,
+      market: 'US',
       changePct: +avgChange.toFixed(2),
       marketCap: totalCap,
       stockCount: stockList.length,
@@ -400,22 +261,18 @@ function buildSectors(market: Market): Sector[] {
   return sectors.sort((a, b) => b.changePct - a.changePct);
 }
 
-const allSectors: Sector[] = [...buildSectors('US'), ...buildSectors('IN')];
+const allSectors: Sector[] = buildSectors();
 
 // News
 const NEWS_SEEDS: Omit<NewsItem, 'id'>[] = [
   { title: 'NVIDIA hits new record high on surging AI chip demand', summary: 'NVIDIA shares reached an all-time high as data center revenue exceeded analyst expectations, driven by enterprise AI adoption.', source: 'Reuters', url: '#', publishedAt: new Date(Date.now() - 30 * 60 * 1000).toISOString(), category: 'market', tickers: ['NVDA'], sentiment: 'positive' },
-  { title: 'Reliance Industries announces Q2 results tomorrow', summary: 'India\'s largest company by market cap is set to report quarterly earnings, with analysts expecting strong performance in telecom and retail.', source: 'Economic Times', url: '#', publishedAt: new Date(Date.now() - 2 * 3600 * 1000).toISOString(), category: 'earnings', tickers: ['RELIANCE'], sentiment: 'neutral' },
   { title: 'Federal Reserve holds interest rates steady', summary: 'The Fed maintained its benchmark rate, signaling potential cuts later in the year if inflation continues to cool.', source: 'Bloomberg', url: '#', publishedAt: new Date(Date.now() - 4 * 3600 * 1000).toISOString(), category: 'economic', tickers: [], sentiment: 'positive' },
   { title: 'Apple announces new dividend and buyback program', summary: 'Apple declared a quarterly dividend and authorized a new share repurchase program worth $110 billion.', source: 'CNBC', url: '#', publishedAt: new Date(Date.now() - 6 * 3600 * 1000).toISOString(), category: 'dividend', tickers: ['AAPL'], sentiment: 'positive' },
   { title: 'Tesla deliveries miss estimates in Q3', summary: 'Tesla reported fewer-than-expected vehicle deliveries, sending shares lower in after-hours trading.', source: 'MarketWatch', url: '#', publishedAt: new Date(Date.now() - 8 * 3600 * 1000).toISOString(), category: 'earnings', tickers: ['TSLA'], sentiment: 'negative' },
-  { title: 'RBI maintains repo rate at 6.5%', summary: 'The Reserve Bank of India kept the policy rate unchanged while revising GDP growth projection upward for the fiscal year.', source: 'Business Standard', url: '#', publishedAt: new Date(Date.now() - 10 * 3600 * 1000).toISOString(), category: 'economic', tickers: [], sentiment: 'neutral' },
   { title: 'Microsoft cloud revenue surges 22% on AI adoption', summary: 'Azure and other cloud services drove strong quarterly growth as enterprise customers ramp up AI workloads.', source: 'Reuters', url: '#', publishedAt: new Date(Date.now() - 12 * 3600 * 1000).toISOString(), category: 'earnings', tickers: ['MSFT'], sentiment: 'positive' },
-  { title: 'HDFC Bank completes merger with HDFC Ltd', summary: 'The merger creates one of the world\'s largest banks by market capitalization, combining lending and banking operations.', source: 'Economic Times', url: '#', publishedAt: new Date(Date.now() - 18 * 3600 * 1000).toISOString(), category: 'corporate', tickers: ['HDFCBANK'], sentiment: 'neutral' },
   { title: 'Oil prices rise on OPEC+ production cuts', summary: 'Crude oil futures gained as OPEC+ extended voluntary production cuts through the next quarter.', source: 'Bloomberg', url: '#', publishedAt: new Date(Date.now() - 20 * 3600 * 1000).toISOString(), category: 'market', tickers: ['XOM', 'CVX'], sentiment: 'positive' },
-  { title: 'Infosys raises FY guidance on strong deal wins', summary: 'India\'s second-largest IT services firm raised its revenue growth guidance citing large contract signings.', source: 'LiveMint', url: '#', publishedAt: new Date(Date.now() - 22 * 3600 * 1000).toISOString(), category: 'earnings', tickers: ['INFY'], sentiment: 'positive' },
   { title: 'Amazon invests $4B in AI startup Anthropic', summary: 'Amazon deepens its AI strategy with a major investment in Anthropic, boosting AWS cloud adoption.', source: 'CNBC', url: '#', publishedAt: new Date(Date.now() - 24 * 3600 * 1000).toISOString(), category: 'corporate', tickers: ['AMZN'], sentiment: 'positive' },
-  { title: 'Indian markets hit record highs on foreign inflows', summary: 'NIFTY 50 and SENSEX reached new all-time highs as foreign institutional investors continued buying.', source: 'Business Standard', url: '#', publishedAt: new Date(Date.now() - 26 * 3600 * 1000).toISOString(), category: 'market', tickers: [], sentiment: 'positive' },
+  { title: 'JPMorgan beats earnings estimates on strong trading revenue', summary: 'JPMorgan reported better-than-expected quarterly earnings driven by robust fixed-income trading performance.', source: 'Reuters', url: '#', publishedAt: new Date(Date.now() - 28 * 3600 * 1000).toISOString(), category: 'earnings', tickers: ['JPM'], sentiment: 'positive' },
 ];
 
 const newsItems: NewsItem[] = NEWS_SEEDS.map((n, i) => ({ ...n, id: `news-${i}` }));
@@ -424,7 +281,6 @@ const newsItems: NewsItem[] = NEWS_SEEDS.map((n, i) => ({ ...n, id: `news-${i}` 
 const dataStore = {
   stocks,
   etfs,
-  mutualFunds,
   indices,
   sectors: allSectors,
   news: newsItems,
@@ -444,14 +300,6 @@ export function getETFs(market?: Market): ETF[] {
 
 export function getETF(ticker: string): ETF | undefined {
   return etfs.find((e) => e.ticker === ticker);
-}
-
-export function getMutualFunds(): MutualFund[] {
-  return mutualFunds;
-}
-
-export function getMutualFund(id: string): MutualFund | undefined {
-  return mutualFunds.find((m) => m.id === id);
 }
 
 export function getIndices(market?: Market): MarketIndex[] {
@@ -481,10 +329,6 @@ export function searchAllAssets(query: string): { type: string; ticker: string; 
   etfs.forEach((e) => {
     if (e.ticker.toLowerCase().includes(q) || e.name.toLowerCase().includes(q))
       results.push({ type: 'etf', ticker: e.ticker, name: e.name, exchange: e.exchange });
-  });
-  mutualFunds.forEach((m) => {
-    if (m.name.toLowerCase().includes(q) || m.amc.toLowerCase().includes(q))
-      results.push({ type: 'mutualfund', ticker: m.id, name: m.name });
   });
   indices.forEach((i) => {
     if (i.name.toLowerCase().includes(q) || i.symbol.toLowerCase().includes(q))

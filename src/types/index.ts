@@ -1,7 +1,7 @@
-export type Market = 'IN' | 'US';
-export type Currency = 'INR' | 'USD';
+export type Market = 'US';
+export type Currency = 'USD';
 
-export type AssetType = 'stock' | 'etf' | 'mutualfund' | 'index';
+export type AssetType = 'stock' | 'etf' | 'index';
 
 export interface PricePoint {
   date: string; // ISO date
@@ -17,7 +17,7 @@ export interface Stock {
   id: string;
   ticker: string;
   name: string;
-  exchange: 'NSE' | 'BSE' | 'NASDAQ' | 'NYSE';
+  exchange: 'NASDAQ' | 'NYSE';
   market: Market;
   sector: string;
   industry: string;
@@ -48,7 +48,7 @@ export interface ETF {
   id: string;
   ticker: string;
   name: string;
-  exchange: 'NSE' | 'BSE' | 'NASDAQ' | 'NYSE';
+  exchange: 'NASDAQ' | 'NYSE';
   market: Market;
   issuer: string;
   price: number;
@@ -67,34 +67,6 @@ export interface ETF {
   sparkline: number[];
   history: PricePoint[];
   currency: Currency;
-}
-
-export interface MutualFund {
-  id: string;
-  schemeCode: string;
-  name: string;
-  amc: string;
-  category: 'Equity' | 'Debt' | 'Hybrid' | 'Index' | 'ELSS' | 'Liquid';
-  plan: 'Direct' | 'Regular';
-  option: 'Growth' | 'IDCW';
-  nav: number;
-  navDate: string;
-  expenseRatio: number;
-  aum: number;
-  benchmark: string;
-  riskLevel: 'Low' | 'Moderate' | 'High' | 'Very High';
-  inceptionDate: string;
-  returns: {
-    '1M': number;
-    '3M': number;
-    '6M': number;
-    '1Y': number;
-    '3Y': number;
-    '5Y': number;
-  };
-  navHistory: { date: string; nav: number }[];
-  topHoldings: { name: string; weight: number }[];
-  sectorAllocation: { sector: string; weight: number }[];
 }
 
 export interface MarketIndex {

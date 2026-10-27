@@ -1,7 +1,7 @@
 import { useMemo, useState, useEffect } from 'react';
 import {
-  getStocks, getETFs, getMutualFunds, getIndices, getSectors, getNews,
-  searchAllAssets, getStock, getETF, getMutualFund, getAllSectors, getExchanges,
+  getStocks, getETFs, getIndices, getSectors, getNews,
+  searchAllAssets, getStock, getETF, getAllSectors, getExchanges,
 } from '@/services/mockData';
 import { fetchQuote, fetchQuotes, type RealtimeQuote } from '@/services/marketDataApi';
 import type { Market, Stock } from '@/types';
@@ -77,14 +77,6 @@ export function useETFs(market?: Market) {
 
 export function useETF(ticker: string) {
   return useMemo(() => getETF(ticker), [ticker]);
-}
-
-export function useMutualFunds() {
-  return useMemo(() => getMutualFunds(), []);
-}
-
-export function useMutualFund(id: string) {
-  return useMemo(() => getMutualFund(id), [id]);
 }
 
 export function useIndices(market?: Market) {
