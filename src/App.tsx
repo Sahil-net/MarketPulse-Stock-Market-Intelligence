@@ -12,10 +12,8 @@ import { StocksExplorer } from '@/pages/StocksExplorer';
 import { Rankings } from '@/pages/Rankings';
 import { PerformanceRankings } from '@/pages/PerformanceRankings';
 import { ETFsExplorer } from '@/pages/ETFsExplorer';
-import { MutualFundsExplorer } from '@/pages/MutualFundsExplorer';
 import { SectorAnalysis } from '@/pages/SectorAnalysis';
 import { StockScreener } from '@/pages/StockScreener';
-import { FundScreener } from '@/pages/FundScreener';
 import { AssetComparison } from '@/pages/AssetComparison';
 import { Watchlists } from '@/pages/Watchlists';
 import { Portfolio } from '@/pages/Portfolio';
@@ -23,7 +21,6 @@ import { MarketNews } from '@/pages/MarketNews';
 import { Settings } from '@/pages/Settings';
 import { StockDetail } from '@/pages/StockDetail';
 import { ETFDetail } from '@/pages/ETFDetail';
-import { MutualFundDetail } from '@/pages/MutualFundDetail';
 import { Radio } from 'lucide-react';
 import { Dashboard } from '@/pages/Dashboard';
 import { TermsOfService } from '@/pages/TermsOfService';
@@ -104,14 +101,8 @@ function MainApp({ onOpenAuth }: MainAppProps) {
       const ticker = route.replace('/etf/', '');
       return <ETFDetail ticker={ticker} navigate={navigate} />;
     }
-    if (route === '/mutual-funds') return <MutualFundsExplorer navigate={navigate} />;
-    if (route.startsWith('/mutual-fund/')) {
-      const id = route.replace('/mutual-fund/', '');
-      return <MutualFundDetail id={id} navigate={navigate} />;
-    }
     if (route === '/sectors') return <SectorAnalysis navigate={navigate} />;
     if (route === '/stock-screener') return <StockScreener navigate={navigate} />;
-    if (route === '/fund-screener') return <FundScreener navigate={navigate} />;
     if (route === '/comparison') return <AssetComparison navigate={navigate} />;
     if (route === '/watchlists') return isGuest ? <GuestPrompt navigate={navigate} onOpenAuth={onOpenAuth} /> : <Watchlists navigate={navigate} />;
     if (route === '/portfolio') return isGuest ? <GuestPrompt navigate={navigate} onOpenAuth={onOpenAuth} /> : <Portfolio navigate={navigate} />;

@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react';
 import { useAppStore } from '@/hooks/useAppStore';
-import { useStocks, useETFs, useMutualFunds } from '@/hooks/useData';
+import { useStocks, useETFs } from '@/hooks/useData';
 import { PageHeader, DemoBadge, EmptyState } from '@/components/shared/States';
 import { ChangeBadge } from '@/components/shared/ChangeBadge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -26,14 +26,12 @@ export function Portfolio({ navigate: navigateProp }: PortfolioProps) {
   const store = useAppStore();
   const stocks = useStocks();
   const etfs = useETFs();
-  const funds = useMutualFunds();
   const [showAdd, setShowAdd] = useState(false);
   const [form, setForm] = useState({ symbol: '', name: '', type: 'stock' as AssetType, quantity: '', purchasePrice: '', purchaseDate: '', transactionCosts: '0', dividends: '0' });
 
   function getCurrentPrice(symbol: string, type: AssetType): { price: number; currency: Currency; name: string } | null {
     if (type === 'stock') { const s = stocks.find((st) => st.ticker === symbol); return s ? { price: s.price, currency: s.currency, name: s.name } : null; }
     if (type === 'etf') { const e = etfs.find((et) => et.ticker === symbol); return e ? { price: e.price, currency: e.currency, name: e.name } : null; }
-    if (type === 'mutualfund') { const f = funds.find((mf) => mf.id === symbol); return f ? { price: f.nav, currency: 'INR', name: f.name } : null; }
     return null;
   }
 
@@ -47,7 +45,7 @@ export function Portfolio({ navigate: navigateProp }: PortfolioProps) {
       const unrealizedPnLPct = invested > 0 ? (unrealizedPnL / invested) * 100 : 0;
       return { ...h, currentPrice, marketValue, invested, unrealizedPnL, unrealizedPnLPct, name: current?.name ?? h.name, currency: current?.currency ?? h.currency };
     });
-  }, [store.portfolio, stocks, etfs, funds]);
+  }, [store.portfolio, stocks, etfs]);
 
   const totals = useMemo(() => {
     const totalValue = holdings.reduce((s, h) => s + h.marketValue, 0);
@@ -212,13 +210,12 @@ export function Portfolio({ navigate: navigateProp }: PortfolioProps) {
                 <SelectContent>
                   <SelectItem value="stock">Stock</SelectItem>
                   <SelectItem value="etf">ETF</SelectItem>
-                  <SelectItem value="mutualfund">Mutual Fund</SelectItem>
                 </SelectContent>
               </Select>
             </div>
             <div className="col-span-2">
               <Label htmlFor="symbol">Symbol</Label>
-              <Input id="symbol" placeholder={form.type === 'mutualfund' ? 'Fund ID' : 'e.g. AAPL'} value={form.symbol} onChange={(e) => setForm({ ...form, symbol: e.target.value })} className="mt-1" />
+              <Input id="symbol" placeholder="e.g. AAPL" value={form.symbol} onChange={(e) => setForm({ ...form, symbol: e.target.value })} className="mt-1" />
             </div>
             <div>
               <Label htmlFor="qty">Quantity</Label>

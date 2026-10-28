@@ -16,7 +16,7 @@ const SECTIONS = [
   {
     icon: Scale,
     title: '2. Not Financial Advice',
-    body: 'MarketPulse is a market intelligence and data visualization platform. All content provided on the Service—including stock prices, ETF data, mutual fund information, performance rankings, technical indicators, sector analysis, and news—is for informational purposes only and does not constitute financial, investment, trading, or other types of advice. You should consult a qualified financial advisor before making any investment decisions.',
+    body: 'MarketPulse is a market intelligence and data visualization platform. All content provided on the Service—including stock prices, ETF data, performance rankings, technical indicators, sector analysis, and news—is for informational purposes only and does not constitute financial, investment, trading, or other types of advice. You should consult a qualified financial advisor before making any investment decisions.',
   },
   {
     icon: Shield,

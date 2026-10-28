@@ -5,17 +5,13 @@ import { useDebounce } from '@/hooks/useDebounce';
 import { useSearch } from '@/hooks/useData';
 import { cn } from '@/lib/utils';
 import {
-  Search, X, TrendingUp, BarChart3, Layers, PieChart, Briefcase,
+  Search, X, TrendingUp, BarChart3, Layers, Briefcase,
   Eye, Newspaper, Settings, ChevronLeft, ChevronRight, Activity,
-  ArrowUpRight, ArrowDownRight, Gauge, ListFilter, GitCompareArrows,
+  ArrowUpRight, ArrowDownRight, Gauge, GitCompareArrows,
   Menu, Sun, Moon, LogOut, Radio, LineChart, Zap, LayoutDashboard, FileText, LogIn,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import {
-  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
-} from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
-import type { Market, Currency } from '@/types';
 
 interface NavItem {
   path: string;
@@ -32,10 +28,8 @@ const NAV_ITEMS: NavItem[] = [
   { path: '/losers', label: 'Top Losers', icon: ArrowDownRight },
   { path: '/rankings', label: 'Performance Rankings', icon: BarChart3 },
   { path: '/etfs', label: 'ETFs Explorer', icon: Layers },
-  { path: '/mutual-funds', label: 'Mutual Funds', icon: PieChart },
   { path: '/sectors', label: 'Sector Analysis', icon: LineChart },
   { path: '/stock-screener', label: 'Stock Screener', icon: Gauge },
-  { path: '/fund-screener', label: 'Fund Screener', icon: ListFilter },
   { path: '/comparison', label: 'Asset Comparison', icon: GitCompareArrows },
   { path: '/watchlists', label: 'Watchlists', icon: Eye },
   { path: '/portfolio', label: 'Portfolio Tracker', icon: Briefcase },
@@ -50,8 +44,8 @@ function getGroup(item: NavItem): string {
   const idx = NAV_ITEMS.indexOf(item);
   if (idx <= 0) return 'Personal';
   if (idx <= 4) return 'Markets';
-  if (idx <= 8) return 'Explorers';
-  if (idx <= 11) return 'Tools';
+  if (idx <= 7) return 'Explorers';
+  if (idx <= 9) return 'Tools';
   return 'Personal';
 }
 
@@ -203,7 +197,6 @@ export function TopBar({ navigate, onMobileMenu, onOpenAuth }: TopBarProps) {
     setShowResults(false);
     if (type === 'stock') navigate(`/stock/${ticker}`);
     else if (type === 'etf') navigate(`/etf/${ticker}`);
-    else if (type === 'mutualfund') navigate(`/mutual-fund/${ticker}`);
     else if (type === 'index') navigate('/');
   }
 
@@ -220,7 +213,7 @@ export function TopBar({ navigate, onMobileMenu, onOpenAuth }: TopBarProps) {
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <input
             type="text"
-            placeholder="Search stocks, ETFs, funds, indices..."
+            placeholder="Search stocks, ETFs, indices..."
             value={searchQuery}
             onChange={(e) => {
               setSearchQuery(e.target.value);
@@ -267,27 +260,15 @@ export function TopBar({ navigate, onMobileMenu, onOpenAuth }: TopBarProps) {
           <span className="text-xs text-success font-medium">Live</span>
         </div>
 
-        {/* Market selector */}
-        <Select value={store.market} onValueChange={(v: Market) => store.setMarket(v)}>
-          <SelectTrigger className="h-8 w-[80px] border-border text-xs">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="US">🇺🇸 US</SelectItem>
-            <SelectItem value="IN">🇮🇳 India</SelectItem>
-          </SelectContent>
-        </Select>
+        {/* Market indicator */}
+        <div className="hidden items-center gap-1.5 rounded-lg border border-border bg-muted/30 px-2.5 py-1.5 sm:flex">
+          <span className="text-xs font-medium text-foreground">US</span>
+        </div>
 
-        {/* Currency selector */}
-        <Select value={store.currency} onValueChange={(v: Currency) => store.setCurrency(v)}>
-          <SelectTrigger className="h-8 w-[70px] border-border text-xs">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="USD">USD</SelectItem>
-            <SelectItem value="INR">INR</SelectItem>
-          </SelectContent>
-        </Select>
+        {/* Currency indicator */}
+        <div className="hidden items-center gap-1.5 rounded-lg border border-border bg-muted/30 px-2.5 py-1.5 sm:flex">
+          <span className="text-xs font-medium text-foreground">USD</span>
+        </div>
 
         {/* Watchlist shortcut */}
         <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => navigate('/watchlists')}>

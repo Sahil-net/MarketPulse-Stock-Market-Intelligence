@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react';
-import { useStocks, useETFs, useMutualFunds, useSectors } from '@/hooks/useData';
+import { useStocks, useETFs, useSectors } from '@/hooks/useData';
 import { useAppStore } from '@/hooks/useAppStore';
 import { DataTable, type Column } from '@/components/shared/DataTable';
 import { ChangeBadge } from '@/components/shared/ChangeBadge';
@@ -23,8 +23,6 @@ const RANKING_TYPES = [
   { value: 'worst-stocks', label: 'Worst Stocks' },
   { value: 'best-etfs', label: 'Best ETFs' },
   { value: 'worst-etfs', label: 'Worst ETFs' },
-  { value: 'best-funds', label: 'Best Funds' },
-  { value: 'worst-funds', label: 'Worst Funds' },
   { value: 'best-sectors', label: 'Best Sectors' },
   { value: 'worst-sectors', label: 'Worst Sectors' },
   { value: 'high-volume', label: 'Highest Volume' },
@@ -53,7 +51,6 @@ export function PerformanceRankings({ navigate }: PerformanceRankingsProps) {
   const store = useAppStore();
   const stocks = useStocks(store.market);
   const etfs = useETFs(store.market);
-  const funds = useMutualFunds();
   const sectors = useSectors(store.market);
 
   const [rankType, setRankType] = useState('best-stocks');
@@ -78,12 +75,6 @@ export function PerformanceRankings({ navigate }: PerformanceRankingsProps) {
       metric: '',
     }));
 
-    const buildFundRows = () => funds.map((f) => {
-      const retMap: Record<string, keyof typeof f.returns> = { '1M': '1M', '3M': '3M', '6M': '6M', '1Y': '1Y', '3Y': '3Y', '5Y': '5Y' };
-      const retKey = retMap[period] ?? '1Y';
-      return { symbol: f.id, name: f.name, type: 'fund', exchange: '—', returnPct: f.returns[retKey] ?? 0, volume: 0, volatility: 0, metric: '' };
-    });
-
     const buildSectorRows = () => sectors.map((s) => ({ symbol: s.name, name: s.name, type: 'sector', exchange: '—', returnPct: s.changePct, volume: 0, volatility: 0, metric: '' }));
 
     let rows: RankRow[] = [];
@@ -92,7 +83,6 @@ export function PerformanceRankings({ navigate }: PerformanceRankingsProps) {
 
     if (rankType.includes('stock')) rows = buildStockRows(stocks);
     else if (rankType.includes('etf')) rows = buildEtfRows(etfs);
-    else if (rankType.includes('fund')) rows = buildFundRows();
     else if (rankType.includes('sector')) rows = buildSectorRows();
     else if (rankType === 'high-volume') {
       rows = buildStockRows(stocks).sort((a, b) => b.volume - a.volume).map((r) => ({ ...r, metric: formatVolume(r.volume) }));
@@ -120,7 +110,7 @@ export function PerformanceRankings({ navigate }: PerformanceRankingsProps) {
 
     rows.sort((a, b) => isBest ? b.returnPct - a.returnPct : isWorst ? a.returnPct - b.returnPct : 0);
     return rows.slice(0, 20);
-  }, [rankType, period, stocks, etfs, funds, sectors, periodDays]);
+  }, [rankType, period, stocks, etfs, sectors, periodDays]);
 
   function handleExport() {
     exportToCSV(`rankings-${rankType}-${period}.csv`,
@@ -178,7 +168,6 @@ export function PerformanceRankings({ navigate }: PerformanceRankingsProps) {
               onRowClick={(r) => {
                 if (r.type === 'stock') navigate(`/stock/${r.symbol}`);
                 else if (r.type === 'etf') navigate(`/etf/${r.symbol}`);
-                else if (r.type === 'fund') navigate(`/mutual-fund/${r.symbol}`);
               }}
               initialSortKey="returnPct"
               initialSortDir={rankType.startsWith('worst-') ? 'asc' : 'desc'}

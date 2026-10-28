@@ -4,13 +4,11 @@ import { useAuth } from '@/hooks/useAuth';
 import { PageHeader } from '@/components/shared/States';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { Sun, Moon, Globe, KeyRound, Info, LogOut, Trash2, User, Activity } from 'lucide-react';
-import type { Market, Currency } from '@/types';
 
 interface SettingsProps {
   navigate: (path: string) => void;
@@ -58,34 +56,11 @@ export function Settings({ navigate: navigateProp }: SettingsProps) {
       </Card>
 
       <Card>
-        <CardHeader className="pb-3"><CardTitle className="text-base flex items-center gap-2"><Globe className="h-4 w-4 text-primary" />Market & Currency</CardTitle></CardHeader>
-        <CardContent className="space-y-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <Label>Default Market</Label>
-              <p className="text-xs text-muted-foreground">Choose which market to display by default</p>
-            </div>
-            <Select value={store.market} onValueChange={(v: Market) => store.setMarket(v)}>
-              <SelectTrigger className="w-[120px]"><SelectValue /></SelectTrigger>
-              <SelectContent>
-                <SelectItem value="US">United States</SelectItem>
-                <SelectItem value="IN">India</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          <Separator />
-          <div className="flex items-center justify-between">
-            <div>
-              <Label>Display Currency</Label>
-              <p className="text-xs text-muted-foreground">Currency for displaying prices</p>
-            </div>
-            <Select value={store.currency} onValueChange={(v: Currency) => store.setCurrency(v)}>
-              <SelectTrigger className="w-[100px]"><SelectValue /></SelectTrigger>
-              <SelectContent>
-                <SelectItem value="USD">USD ($)</SelectItem>
-                <SelectItem value="INR">INR (₹)</SelectItem>
-              </SelectContent>
-            </Select>
+        <CardHeader className="pb-3"><CardTitle className="text-base flex items-center gap-2"><Globe className="h-4 w-4 text-primary" />Market</CardTitle></CardHeader>
+        <CardContent className="space-y-3">
+          <div className="rounded-lg border border-border bg-muted/30 p-3">
+            <p className="text-sm text-foreground">United States (USD)</p>
+            <p className="mt-1 text-xs text-muted-foreground">MarketPulse covers US equities and ETFs. Prices are displayed in US dollars.</p>
           </div>
         </CardContent>
       </Card>
@@ -113,7 +88,7 @@ export function Settings({ navigate: navigateProp }: SettingsProps) {
             </div>
             <p className="text-xs text-muted-foreground">
               Real-time stock quotes, price history, and market news are fetched live
-              from Finnhub. Market data for ETFs and mutual funds continues to use
+              from Finnhub. Market data for ETFs continues to use
               built-in data. To activate live data, add your Finnhub API key as
               FINNHUB_API_KEY in the edge function secrets.
             </p>
@@ -194,7 +169,7 @@ export function Settings({ navigate: navigateProp }: SettingsProps) {
         <CardContent>
           <p className="text-sm text-muted-foreground leading-relaxed">
             MarketPulse is a stock market intelligence platform for discovering and analyzing
-            stocks, ETFs, and mutual funds. It provides performance rankings, technical indicators,
+            stocks, ETFs, and indices. It provides performance rankings, technical indicators,
             sector analysis, screeners, and portfolio tracking with real-time data.
           </p>
           <p className="mt-2 text-xs text-muted-foreground/70">Version 2.0.0 · Built with React, Vite, Tailwind CSS, Recharts, and Supabase</p>

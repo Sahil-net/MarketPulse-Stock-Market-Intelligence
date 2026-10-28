@@ -96,7 +96,7 @@ export function MarketOverview({ navigate }: MarketOverviewProps) {
 
   return (
     <div className="animate-fade-in space-y-6">
-      <PageHeader title="Market Overview" description={`Real-time market intelligence · ${store.market === 'IN' ? 'India' : 'United States'}`}>
+      <PageHeader title="Market Overview" description="Real-time market intelligence · United States">
         <DemoBadge />
       </PageHeader>
 

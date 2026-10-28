@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useAppStore } from '@/hooks/useAppStore';
-import { useStocks, useETFs, useMutualFunds } from '@/hooks/useData';
+import { useStocks, useETFs } from '@/hooks/useData';
 import { PageHeader, DemoBadge, EmptyState } from '@/components/shared/States';
 import { ChangeBadge } from '@/components/shared/ChangeBadge';
 import { Sparkline } from '@/components/shared/Sparkline';
@@ -21,7 +21,6 @@ export function Watchlists({ navigate }: WatchlistsProps) {
   const store = useAppStore();
   const stocks = useStocks();
   const etfs = useETFs();
-  const funds = useMutualFunds();
   const [activeWlId, setActiveWlId] = useState(store.watchlists[0]?.id ?? '');
   const [showCreate, setShowCreate] = useState(false);
   const [newWlName, setNewWlName] = useState('');
@@ -38,10 +37,6 @@ export function Watchlists({ navigate }: WatchlistsProps) {
       const e = etfs.find((et) => et.ticker === symbol);
       return e ? { price: e.price, changePct: e.changePct, change: e.change, currency: e.currency, sparkline: e.sparkline, name: e.name, exchange: e.exchange } : null;
     }
-    if (type === 'mutualfund') {
-      const f = funds.find((mf) => mf.id === symbol);
-      return f ? { price: f.nav, changePct: f.returns['1M'], change: 0, currency: 'INR' as const, sparkline: f.navHistory.slice(-30).map((n) => n.nav), name: f.name, exchange: 'MF' } : null;
-    }
     return null;
   }
 
@@ -51,8 +46,6 @@ export function Watchlists({ navigate }: WatchlistsProps) {
     if (stockMatch) { store.addToWatchlist(activeWl.id, stockMatch.ticker, 'stock'); setAddSymbol(''); return; }
     const etfMatch = etfs.find((e) => e.ticker.toUpperCase() === addSymbol.toUpperCase());
     if (etfMatch) { store.addToWatchlist(activeWl.id, etfMatch.ticker, 'etf'); setAddSymbol(''); return; }
-    const fundMatch = funds.find((f) => f.name.toLowerCase().includes(addSymbol.toLowerCase()));
-    if (fundMatch) { store.addToWatchlist(activeWl.id, fundMatch.id, 'mutualfund'); setAddSymbol(''); return; }
   }
 
   return (
@@ -102,7 +95,7 @@ export function Watchlists({ navigate }: WatchlistsProps) {
               </CardHeader>
               <CardContent className="p-0">
                 {activeWl.symbols.length === 0 ? (
-                  <EmptyState title="Watchlist is empty" description="Add stocks, ETFs, or funds by typing their symbol above." />
+                  <EmptyState title="Watchlist is empty" description="Add stocks or ETFs by typing their symbol above." />
                 ) : (
                   <div className="overflow-x-auto">
                     <table className="w-full text-sm">
@@ -131,7 +124,6 @@ export function Watchlists({ navigate }: WatchlistsProps) {
                             <tr key={sym.symbol} className="border-b border-border/50 hover:bg-muted/30 cursor-pointer" onClick={() => {
                               if (sym.type === 'stock') navigate(`/stock/${sym.symbol}`);
                               else if (sym.type === 'etf') navigate(`/etf/${sym.symbol}`);
-                              else if (sym.type === 'mutualfund') navigate(`/mutual-fund/${sym.symbol}`);
                             }}>
                               <td className="px-3 py-2.5 font-medium text-foreground">{sym.symbol}</td>
                               <td className="px-3 py-2.5 text-muted-foreground text-xs truncate max-w-[180px]">{data.name}</td>

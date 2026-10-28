@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react';
-import { useStocks, useETFs, useMutualFunds } from '@/hooks/useData';
+import { useStocks, useETFs } from '@/hooks/useData';
 import { useAppStore } from '@/hooks/useAppStore';
 import { PageHeader, DemoBadge, EmptyState } from '@/components/shared/States';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -25,25 +25,23 @@ interface ComparisonItem {
   name: string;
   type: string;
   history: { date: string; close: number }[];
-  currency: 'INR' | 'USD';
+  currency: 'USD';
 }
 
 export function AssetComparison({ navigate }: AssetComparisonProps) {
   const store = useAppStore();
   const stocks = useStocks(store.market);
   const etfs = useETFs(store.market);
-  const funds = useMutualFunds();
 
   const [selected, setSelected] = useState<ComparisonItem[]>([]);
-  const [searchType, setSearchType] = useState<'stock' | 'etf' | 'fund'>('stock');
+  const [searchType, setSearchType] = useState<'stock' | 'etf'>('stock');
   const [searchQuery, setSearchQuery] = useState('');
   const [period, setPeriod] = useState('1Y');
 
   const availableAssets = useMemo(() => {
     if (searchType === 'stock') return stocks.map((s) => ({ symbol: s.ticker, name: s.name, type: 'stock', history: s.history, currency: s.currency }));
-    if (searchType === 'etf') return etfs.map((e) => ({ symbol: e.ticker, name: e.name, type: 'etf', history: e.history, currency: e.currency }));
-    return funds.map((f) => ({ symbol: f.id, name: f.name, type: 'fund', history: f.navHistory.map((n) => ({ date: n.date, close: n.nav })), currency: 'INR' as const }));
-  }, [stocks, etfs, funds, searchType]);
+    return etfs.map((e) => ({ symbol: e.ticker, name: e.name, type: 'etf', history: e.history, currency: e.currency }));
+  }, [stocks, etfs, searchType]);
 
   const searchResults = useMemo(() => {
     if (!searchQuery) return availableAssets.slice(0, 8);
@@ -100,7 +98,7 @@ export function AssetComparison({ navigate }: AssetComparisonProps) {
 
   return (
     <div className="animate-fade-in space-y-4">
-      <PageHeader title="Asset Comparison" description="Compare up to 5 stocks, ETFs, or mutual funds">
+      <PageHeader title="Asset Comparison" description="Compare up to 5 stocks or ETFs">
         <DemoBadge />
       </PageHeader>
 
@@ -113,7 +111,6 @@ export function AssetComparison({ navigate }: AssetComparisonProps) {
               <SelectContent>
                 <SelectItem value="stock">Stocks</SelectItem>
                 <SelectItem value="etf">ETFs</SelectItem>
-                <SelectItem value="fund">Mutual Funds</SelectItem>
               </SelectContent>
             </Select>
             <Input placeholder="Search to add..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="max-w-xs" />

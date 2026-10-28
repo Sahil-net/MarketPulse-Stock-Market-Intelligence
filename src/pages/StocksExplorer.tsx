@@ -142,7 +142,7 @@ export function StocksExplorer({ navigate }: StocksExplorerProps) {
 
   return (
     <div className="animate-fade-in space-y-4">
-      <PageHeader title="Stocks Explorer" description={`${filtered.length} stocks · ${store.market === 'IN' ? 'India' : 'US'} markets`}>
+      <PageHeader title="Stocks Explorer" description={`${filtered.length} stocks · US markets`}>
         <Button variant="outline" size="sm" onClick={handleExport}><Download className="mr-1.5 h-3.5 w-3.5" />Export</Button>
         <DemoBadge />
       </PageHeader>

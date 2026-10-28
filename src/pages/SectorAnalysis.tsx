@@ -36,7 +36,7 @@ export function SectorAnalysis({ navigate }: SectorAnalysisProps) {
 
   return (
     <div className="animate-fade-in space-y-4">
-      <PageHeader title="Sector Analysis" description={`Performance by sector · ${store.market === 'IN' ? 'India' : 'US'} markets`}>
+      <PageHeader title="Sector Analysis" description="Performance by sector · US markets">
         <DemoBadge />
       </PageHeader>
 
