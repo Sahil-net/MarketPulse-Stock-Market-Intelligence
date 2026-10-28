@@ -255,7 +255,7 @@ function IndexCard({
   index, currency, selected, onClick,
 }: {
   index: MarketIndex;
-  currency: 'INR' | 'USD';
+  currency: 'USD';
   selected: boolean;
   onClick: () => void;
 }) {
