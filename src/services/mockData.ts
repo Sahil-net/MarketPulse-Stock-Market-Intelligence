@@ -1,6 +1,6 @@
 import type {
   Stock, ETF, MarketIndex, Sector, NewsItem,
-  PricePoint, Market, Currency,
+  PricePoint, Market, Currency, Dividend, DividendFrequency,
 } from '@/types';
 
 // Deterministic PRNG so data is stable across reloads
@@ -65,6 +65,52 @@ interface StockSeed {
   sector: string; industry: string; price: number; marketCap: number; volume: number;
   pe: number | null; divYield: number | null; beta: number; currency: Currency;
   description: string; volatility?: number; drift?: number;
+  divFrequency?: DividendFrequency;
+}
+
+const MONTHS_BETWEEN: Record<DividendFrequency, number> = {
+  monthly: 1,
+  quarterly: 3,
+  'semi-annual': 6,
+  annual: 12,
+  irregular: 3,
+};
+
+function genDividendHistory(
+  seed: number,
+  price: number,
+  divYield: number | null,
+  frequency: DividendFrequency | undefined,
+): { frequency: DividendFrequency | null; annual: number; history: Dividend[]; nextExDate: string | null } {
+  if (divYield === null || divYield <= 0) {
+    return { frequency: null, annual: 0, history: [], nextExDate: null };
+  }
+  const freq: DividendFrequency = frequency ?? 'quarterly';
+  const rng = seeded(seed * 31 + 17);
+  const annualAmount = +(price * (divYield / 100)).toFixed(2);
+  const perPayment = +(annualAmount / (12 / MONTHS_BETWEEN[freq])).toFixed(2);
+  const months = MONTHS_BETWEEN[freq];
+  const history: Dividend[] = [];
+  const now = new Date();
+  // generate ~3 years of past payments
+  const count = Math.floor((36 / months));
+  for (let i = 1; i <= count; i++) {
+    const exDate = new Date(now.getFullYear(), now.getMonth() - i * months, 10);
+    const payDate = new Date(exDate.getFullYear(), exDate.getMonth(), exDate.getDate() + 15);
+    // slight drift in amount to look realistic
+    const drift = 1 + (rng() - 0.5) * 0.06;
+    history.push({
+      exDate: exDate.toISOString().split('T')[0],
+      payDate: payDate.toISOString().split('T')[0],
+      amount: +(perPayment * drift).toFixed(2),
+      type: 'regular',
+    });
+  }
+  history.sort((a, b) => (a.exDate < b.exDate ? 1 : -1));
+  // next ex-date: one period forward from the most recent past payment
+  const nextEx = new Date(now.getFullYear(), now.getMonth() + months, 10);
+  const nextExDate = nextEx.toISOString().split('T')[0];
+  return { frequency: freq, annual: annualAmount, history, nextExDate };
 }
 
 const US_STOCK_SEEDS: StockSeed[] = [
@@ -99,6 +145,7 @@ function buildStock(s: StockSeed, seed: number): Stock {
   const high52 = Math.max(...history.slice(-252).map((p) => p.high));
   const low52 = Math.min(...history.slice(-252).map((p) => p.low));
   const avgVolume = Math.floor(s.volume * 0.85);
+  const div = genDividendHistory(seed, s.price, s.divYield, s.divFrequency);
   return {
     id: `${s.market}-${s.ticker}`,
     ticker: s.ticker,
@@ -116,6 +163,10 @@ function buildStock(s: StockSeed, seed: number): Stock {
     avgVolume,
     peRatio: s.pe !== null && s.pe > 0 ? s.pe : null,
     dividendYield: s.divYield,
+    dividendFrequency: div.frequency,
+    annualDividend: div.annual,
+    nextExDate: div.nextExDate,
+    dividendHistory: div.history,
     high52: +high52.toFixed(2),
     low52: +low52.toFixed(2),
     beta: s.beta,

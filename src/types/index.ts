@@ -13,6 +13,15 @@ export interface PricePoint {
   adjustedClose?: number;
 }
 
+export type DividendFrequency = 'monthly' | 'quarterly' | 'semi-annual' | 'annual' | 'irregular';
+
+export interface Dividend {
+  exDate: string; // ISO date — ex-dividend date
+  payDate: string; // ISO date — payment date
+  amount: number; // per-share amount in the stock's currency
+  type: 'regular' | 'special';
+}
+
 export interface Stock {
   id: string;
   ticker: string;
@@ -30,6 +39,10 @@ export interface Stock {
   avgVolume: number;
   peRatio: number | null;
   dividendYield: number | null;
+  dividendFrequency: DividendFrequency | null;
+  annualDividend: number;
+  nextExDate: string | null;
+  dividendHistory: Dividend[];
   high52: number;
   low52: number;
   beta: number;

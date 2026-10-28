@@ -10,7 +10,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { calculateTechnicalIndicators, calculateReturn } from '@/services/technicalAnalysis';
 import { formatPrice, formatMarketCap, formatVolume, formatRatio, formatPercent, formatNumber, formatDate } from '@/lib/format';
-import { ArrowLeft, Star, TrendingUp, TrendingDown, Newspaper } from 'lucide-react';
+import { ArrowLeft, Star, TrendingUp, TrendingDown, Newspaper, CalendarClock, Coins } from 'lucide-react';
 import {
   AreaChart, Area, XAxis, YAxis, Tooltip as RTooltip, ResponsiveContainer, BarChart, Bar, CartesianGrid, ReferenceLine,
 } from 'recharts';
@@ -248,6 +248,71 @@ export function StockDetail({ ticker, navigate }: StockDetailProps) {
           </CardContent>
         </Card>
       </div>
+
+      {/* Dividends */}
+      {stock.dividendYield !== null && stock.dividendYield > 0 && (
+        <Card>
+          <CardHeader className="pb-3">
+            <CardTitle className="flex items-center gap-2 text-base">
+              <Coins className="h-4 w-4 text-primary" />
+              Dividends
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-2 gap-x-4 gap-y-3 sm:grid-cols-4">
+              <div>
+                <p className="text-xs text-muted-foreground">Dividend Yield</p>
+                <p className="text-sm font-medium tabular-nums text-foreground">{formatPercent(stock.dividendYield, false)}</p>
+              </div>
+              <div>
+                <p className="text-xs text-muted-foreground">Annual Payout</p>
+                <p className="text-sm font-medium tabular-nums text-foreground">{formatPrice(stock.annualDividend, stock.currency)}</p>
+              </div>
+              <div>
+                <p className="text-xs text-muted-foreground">Frequency</p>
+                <p className="text-sm font-medium capitalize text-foreground">{stock.dividendFrequency ?? '—'}</p>
+              </div>
+              <div>
+                <p className="text-xs text-muted-foreground">Next Ex-Date</p>
+                <p className="flex items-center gap-1 text-sm font-medium tabular-nums text-foreground">
+                  <CalendarClock className="h-3.5 w-3.5 text-muted-foreground" />
+                  {stock.nextExDate ? formatDate(stock.nextExDate) : '—'}
+                </p>
+              </div>
+            </div>
+
+            {stock.dividendHistory.length > 0 && (
+              <div className="mt-4">
+                <p className="mb-2 text-xs font-medium text-muted-foreground">Payment History</p>
+                <div className="overflow-x-auto">
+                  <table className="w-full text-sm">
+                    <thead>
+                      <tr className="border-b border-border">
+                        <th className="px-2 py-1.5 text-left text-xs font-medium text-muted-foreground">Ex-Date</th>
+                        <th className="px-2 py-1.5 text-left text-xs font-medium text-muted-foreground">Pay Date</th>
+                        <th className="px-2 py-1.5 text-right text-xs font-medium text-muted-foreground">Amount</th>
+                        <th className="px-2 py-1.5 text-left text-xs font-medium text-muted-foreground">Type</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {stock.dividendHistory.slice(0, 8).map((d, i) => (
+                        <tr key={i} className="border-b border-border/40">
+                          <td className="px-2 py-1.5 tabular-nums text-foreground">{formatDate(d.exDate)}</td>
+                          <td className="px-2 py-1.5 tabular-nums text-muted-foreground">{formatDate(d.payDate)}</td>
+                          <td className="px-2 py-1.5 text-right tabular-nums text-foreground">{formatPrice(d.amount, stock.currency)}</td>
+                          <td className="px-2 py-1.5">
+                            <span className={`text-xs capitalize ${d.type === 'special' ? 'font-medium text-primary' : 'text-muted-foreground'}`}>{d.type}</span>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      )}
 
       {/* Company description */}
       <Card>

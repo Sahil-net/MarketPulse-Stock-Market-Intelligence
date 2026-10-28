@@ -8,9 +8,9 @@ import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import {
   Eye, Briefcase, TrendingUp, TrendingDown, ArrowRight,
-  Clock, Mail, Activity, BarChart3, Newspaper,
+  Clock, Mail, Activity, BarChart3, Newspaper, Coins, CalendarClock,
 } from 'lucide-react';
-import { formatPrice, formatNumber, formatPercent } from '@/lib/format';
+import { formatPrice, formatNumber, formatPercent, formatDate } from '@/lib/format';
 
 interface DashboardProps {
   navigate: (path: string) => void;
@@ -50,6 +50,32 @@ export function Dashboard({ navigate }: DashboardProps) {
   const portfolioPnl = portfolioValue - portfolioCost;
   const portfolioPnlPct = portfolioCost > 0 ? (portfolioPnl / portfolioCost) * 100 : 0;
 
+  const dividendIncome = useMemo(() => {
+    return store.portfolio.reduce((acc, h) => {
+      const stock = stocks.find((s) => s.ticker === h.symbol);
+      const annual = stock?.annualDividend ?? 0;
+      return acc + annual * h.quantity;
+    }, 0);
+  }, [store.portfolio, stocks]);
+
+  const upcomingDividends = useMemo(() => {
+    const today = new Date().toISOString().split('T')[0];
+    return store.portfolio
+      .map((h) => {
+        const stock = stocks.find((s) => s.ticker === h.symbol);
+        if (!stock?.nextExDate || stock.nextExDate < today) return null;
+        return {
+          ticker: h.symbol,
+          name: stock.name,
+          exDate: stock.nextExDate,
+          amount: stock.annualDividend ? stock.annualDividend * h.quantity : 0,
+          frequency: stock.dividendFrequency ?? '—',
+        };
+      })
+      .filter((d): d is { ticker: string; name: string; exDate: string; amount: number; frequency: string } => d !== null)
+      .sort((a, b) => (a.exDate < b.exDate ? -1 : 1));
+  }, [store.portfolio, stocks]);
+
   const greeting = (() => {
     const hour = new Date().getHours();
     if (hour < 12) return 'Good morning';
@@ -83,7 +109,7 @@ export function Dashboard({ navigate }: DashboardProps) {
       </Card>
 
       {/* Quick stats */}
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
         <StatCard
           icon={<Eye className="h-4 w-4" />}
           label="Watchlist Items"
@@ -102,6 +128,14 @@ export function Dashboard({ navigate }: DashboardProps) {
           value={portfolioCount > 0 ? formatPrice(portfolioPnl, store.currency) : '—'}
           subValue={portfolioCount > 0 ? formatPercent(portfolioPnlPct) : undefined}
           valueClass={portfolioPnl >= 0 ? 'text-success' : 'text-destructive'}
+          onClick={() => navigate('/portfolio')}
+        />
+        <StatCard
+          icon={<Coins className="h-4 w-4" />}
+          label="Est. Annual Dividends"
+          value={portfolioCount > 0 ? formatPrice(dividendIncome, store.currency) : '—'}
+          subValue={portfolioCount > 0 ? 'Projected' : undefined}
+          valueClass="text-success"
           onClick={() => navigate('/portfolio')}
         />
         <StatCard
@@ -210,6 +244,44 @@ export function Dashboard({ navigate }: DashboardProps) {
           </CardContent>
         </Card>
       </div>
+
+      {/* Upcoming Dividends */}
+      {upcomingDividends.length > 0 && (
+        <Card>
+          <CardHeader className="pb-3">
+            <CardTitle className="flex items-center gap-2 text-base">
+              <CalendarClock className="h-4 w-4 text-primary" />
+              Upcoming Dividends
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-1">
+              {upcomingDividends.slice(0, 5).map((d) => (
+                <button
+                  key={d.ticker}
+                  onClick={() => navigate(`/stock/${d.ticker}`)}
+                  className="flex w-full items-center justify-between rounded-lg px-2 py-2 transition-colors hover:bg-muted/30"
+                >
+                  <div className="flex items-center gap-2 min-w-0">
+                    <span className="text-sm font-semibold text-foreground">{d.ticker}</span>
+                    <span className="truncate text-xs text-muted-foreground">{d.name}</span>
+                  </div>
+                  <div className="flex items-center gap-3 shrink-0">
+                    <span className="text-xs capitalize text-muted-foreground">{d.frequency}</span>
+                    <span className="flex items-center gap-1 text-xs text-muted-foreground">
+                      <CalendarClock className="h-3 w-3" />
+                      {formatDate(d.exDate)}
+                    </span>
+                    <span className="text-sm font-medium tabular-nums text-success">
+                      {formatPrice(d.amount, store.currency)}
+                    </span>
+                  </div>
+                </button>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Latest News */}
       <Card>
