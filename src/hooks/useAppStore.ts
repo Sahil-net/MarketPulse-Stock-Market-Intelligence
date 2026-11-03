@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import type { Market, Currency, Watchlist, PortfolioHolding, AssetType, PriceAlert } from '@/types';
+import { toast } from '@/hooks/use-toast';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/hooks/useAuth';
 
@@ -304,7 +305,7 @@ export function useAppStore() {
   }, []);
 
   const addPriceAlert = useCallback(async (alert: Omit<PriceAlert, 'id' | 'enabled' | 'triggered' | 'triggeredAt' | 'createdAt'>) => {
-    const { data } = await supabase
+    const { data, error } = await supabase
       .from('price_alerts')
       .insert({
         symbol: alert.symbol,
@@ -315,10 +316,14 @@ export function useAppStore() {
       .select()
       .single();
 
-    if (data) {
-      const a: PriceAlert = mapAlertRow(data);
-      setState({ ...currentState, priceAlerts: [a, ...currentState.priceAlerts] });
+    if (error || !data) {
+      toast({ title: 'Could not create alert', description: 'Please try again in a moment.', variant: 'destructive' });
+      return false;
     }
+
+    const a: PriceAlert = mapAlertRow(data);
+    setState({ ...currentState, priceAlerts: [a, ...currentState.priceAlerts] });
+    return true;
   }, []);
 
   const togglePriceAlert = useCallback(async (id: string) => {

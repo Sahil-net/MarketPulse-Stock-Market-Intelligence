@@ -10,8 +10,9 @@ import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
-import { Bell, BellRing, Trash2, RotateCcw, ArrowUpCircle, ArrowDownCircle } from 'lucide-react';
+import { Bell, BellRing, Trash2, RotateCcw, ArrowUpCircle, ArrowDownCircle, Download } from 'lucide-react';
 import { formatPrice, formatDate } from '@/lib/format';
+import { exportToCSV } from '@/lib/csv';
 
 interface PriceAlertsProps {
   navigate: (path: string) => void;
@@ -31,12 +32,33 @@ export function PriceAlerts({ navigate }: PriceAlertsProps) {
   const activeCount = alerts.filter((a) => a.enabled && !a.triggered).length;
   const triggeredCount = alerts.filter((a) => a.triggered).length;
 
+  function handleExport() {
+    const active = alerts.filter((a) => a.enabled && !a.triggered);
+    exportToCSV(
+      'active-price-alerts.csv',
+      ['Symbol', 'Name', 'Direction', 'Target Price', 'Current Price', 'Created'],
+      active.map((a) => [
+        a.symbol,
+        a.name,
+        a.direction,
+        a.targetPrice,
+        stockMap.get(a.symbol) ?? '',
+        a.createdAt,
+      ]),
+    );
+  }
+
   return (
     <div className="animate-fade-in space-y-4 max-w-4xl">
       <PageHeader
         title="Price Alerts"
         description="Get notified when a stock crosses your target price"
-      />
+      >
+        <Button variant="outline" size="sm" onClick={handleExport} disabled={activeCount === 0}>
+          <Download className="mr-1.5 h-3.5 w-3.5" />
+          Export
+        </Button>
+      </PageHeader>
 
       {alerts.length === 0 ? (
         <Card>

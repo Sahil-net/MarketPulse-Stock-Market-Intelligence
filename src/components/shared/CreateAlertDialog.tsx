@@ -39,8 +39,9 @@ export function CreateAlertDialog({
     const price = parseFloat(targetPrice);
     if (isNaN(price) || price <= 0) return;
     setSubmitting(true);
-    await store.addPriceAlert({ symbol, name, direction, targetPrice: price });
+    const created = await store.addPriceAlert({ symbol, name, direction, targetPrice: price });
     setSubmitting(false);
+    if (!created) return;
     setOpen(false);
     onCreated?.();
   }
