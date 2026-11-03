@@ -1,6 +1,7 @@
 import { useState, useMemo } from 'react';
 import { useStock } from '@/hooks/useData';
 import { useAppStore } from '@/hooks/useAppStore';
+import { useAuth } from '@/hooks/useAuth';
 import { useNews } from '@/hooks/useData';
 import { ChangeBadge } from '@/components/shared/ChangeBadge';
 import { DemoBadge, EmptyState } from '@/components/shared/States';
@@ -24,6 +25,7 @@ interface StockDetailProps {
 
 export function StockDetail({ ticker, navigate }: StockDetailProps) {
   const store = useAppStore();
+  const { user } = useAuth();
   const stock = useStock(ticker);
   const news = useNews(ticker);
   const [period, setPeriod] = useState<PeriodKey>('3M');
@@ -133,16 +135,18 @@ export function StockDetail({ ticker, navigate }: StockDetailProps) {
           >
             <Star className={`h-4 w-4 ${inWatchlist ? 'fill-current' : ''}`} />
           </Button>
-          <CreateAlertDialog
-            symbol={stock.ticker}
-            name={stock.name}
-            currentPrice={stock.price}
-            trigger={
-              <Button variant="outline" size="icon" title="Set price alert">
-                <BellPlus className="h-4 w-4" />
-              </Button>
-            }
-          />
+          {user && (
+            <CreateAlertDialog
+              symbol={stock.ticker}
+              name={stock.name}
+              currentPrice={stock.price}
+              trigger={
+                <Button variant="outline" size="icon" title="Set price alert">
+                  <BellPlus className="h-4 w-4" />
+                </Button>
+              }
+            />
+          )}
         </div>
       </div>
 
