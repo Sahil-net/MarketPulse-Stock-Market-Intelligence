@@ -132,6 +132,18 @@ export interface PortfolioHolding {
   currency: Currency;
 }
 
+export interface PriceAlert {
+  id: string;
+  symbol: string;
+  name: string;
+  direction: 'above' | 'below';
+  targetPrice: number;
+  enabled: boolean;
+  triggered: boolean;
+  triggeredAt: string | null;
+  createdAt: string;
+}
+
 export interface Watchlist {
   id: string;
   name: string;

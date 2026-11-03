@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
-import type { Market, Currency, Watchlist, PortfolioHolding, AssetType } from '@/types';
+import type { Market, Currency, Watchlist, PortfolioHolding, AssetType, PriceAlert } from '@/types';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/hooks/useAuth';
 
@@ -9,6 +9,7 @@ interface AppState {
   theme: 'dark' | 'light';
   watchlists: Watchlist[];
   portfolio: PortfolioHolding[];
+  priceAlerts: PriceAlert[];
   loading: boolean;
   settingsId?: string;
 }
@@ -19,6 +20,7 @@ const DEFAULT_STATE: AppState = {
   theme: 'dark',
   watchlists: [],
   portfolio: [],
+  priceAlerts: [],
   loading: true,
 };
 
@@ -62,12 +64,27 @@ function mapHoldingRow(row: any): PortfolioHolding {
   };
 }
 
+function mapAlertRow(row: any): PriceAlert {
+  return {
+    id: row.id,
+    symbol: row.symbol,
+    name: row.name,
+    direction: row.direction as 'above' | 'below',
+    targetPrice: Number(row.target_price),
+    enabled: row.enabled,
+    triggered: row.triggered,
+    triggeredAt: row.triggered_at,
+    createdAt: row.created_at,
+  };
+}
+
 async function loadFromSupabase(): Promise<Partial<AppState>> {
-  const [wlRes, itemsRes, holdingsRes, settingsRes] = await Promise.all([
+  const [wlRes, itemsRes, holdingsRes, settingsRes, alertsRes] = await Promise.all([
     supabase.from('watchlists').select('*'),
     supabase.from('watchlist_items').select('*'),
     supabase.from('portfolio_holdings').select('*'),
     supabase.from('app_settings').select('*').limit(1).maybeSingle(),
+    supabase.from('price_alerts').select('*').order('created_at', { ascending: false }),
   ]);
 
   const state: Partial<AppState> = {};
@@ -85,6 +102,10 @@ async function loadFromSupabase(): Promise<Partial<AppState>> {
 
   if (holdingsRes.data) {
     state.portfolio = holdingsRes.data.map(mapHoldingRow);
+  }
+
+  if (alertsRes.data) {
+    state.priceAlerts = alertsRes.data.map(mapAlertRow);
   }
 
   return state;
@@ -282,6 +303,66 @@ export function useAppStore() {
     await supabase.from('portfolio_holdings').delete().eq('id', id);
   }, []);
 
+  const addPriceAlert = useCallback(async (alert: Omit<PriceAlert, 'id' | 'enabled' | 'triggered' | 'triggeredAt' | 'createdAt'>) => {
+    const { data } = await supabase
+      .from('price_alerts')
+      .insert({
+        symbol: alert.symbol,
+        name: alert.name,
+        direction: alert.direction,
+        target_price: alert.targetPrice,
+      })
+      .select()
+      .single();
+
+    if (data) {
+      const a: PriceAlert = mapAlertRow(data);
+      setState({ ...currentState, priceAlerts: [a, ...currentState.priceAlerts] });
+    }
+  }, []);
+
+  const togglePriceAlert = useCallback(async (id: string) => {
+    const alert = currentState.priceAlerts.find((a) => a.id === id);
+    if (!alert) return;
+    const enabled = !alert.enabled;
+    setState({
+      ...currentState,
+      priceAlerts: currentState.priceAlerts.map((a) =>
+        a.id === id ? { ...a, enabled } : a
+      ),
+    });
+    await supabase.from('price_alerts').update({ enabled }).eq('id', id);
+  }, []);
+
+  const resetPriceAlert = useCallback(async (id: string) => {
+    setState({
+      ...currentState,
+      priceAlerts: currentState.priceAlerts.map((a) =>
+        a.id === id ? { ...a, triggered: false, triggeredAt: null } : a
+      ),
+    });
+    await supabase.from('price_alerts').update({ triggered: false, triggered_at: null }).eq('id', id);
+  }, []);
+
+  const removePriceAlert = useCallback(async (id: string) => {
+    setState({
+      ...currentState,
+      priceAlerts: currentState.priceAlerts.filter((a) => a.id !== id),
+    });
+    await supabase.from('price_alerts').delete().eq('id', id);
+  }, []);
+
+  const markAlertTriggered = useCallback(async (id: string) => {
+    const now = new Date().toISOString();
+    setState({
+      ...currentState,
+      priceAlerts: currentState.priceAlerts.map((a) =>
+        a.id === id ? { ...a, triggered: true, triggeredAt: now, enabled: false } : a
+      ),
+    });
+    await supabase.from('price_alerts').update({ triggered: true, triggered_at: now, enabled: false }).eq('id', id);
+  }, []);
+
   return {
     ...state,
     setMarket,
@@ -294,5 +375,10 @@ export function useAppStore() {
     isInWatchlist,
     addPortfolioHolding,
     removePortfolioHolding,
+    addPriceAlert,
+    togglePriceAlert,
+    resetPriceAlert,
+    removePriceAlert,
+    markAlertTriggered,
   };
 }

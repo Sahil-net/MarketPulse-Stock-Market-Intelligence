@@ -24,6 +24,8 @@ import { ETFDetail } from '@/pages/ETFDetail';
 import { Radio } from 'lucide-react';
 import { Dashboard } from '@/pages/Dashboard';
 import { TermsOfService } from '@/pages/TermsOfService';
+import { PriceAlerts } from '@/pages/PriceAlerts';
+import { useAlertChecker } from '@/hooks/useAlertChecker';
 
 function AppContent() {
   const { loading } = useAuth();
@@ -60,6 +62,8 @@ function MainApp({ onOpenAuth }: MainAppProps) {
   const { user } = useAuth();
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+
+  useAlertChecker();
 
   useEffect(() => {
     const html = document.documentElement;
@@ -106,6 +110,7 @@ function MainApp({ onOpenAuth }: MainAppProps) {
     if (route === '/comparison') return <AssetComparison navigate={navigate} />;
     if (route === '/watchlists') return isGuest ? <GuestPrompt navigate={navigate} onOpenAuth={onOpenAuth} /> : <Watchlists navigate={navigate} />;
     if (route === '/portfolio') return isGuest ? <GuestPrompt navigate={navigate} onOpenAuth={onOpenAuth} /> : <Portfolio navigate={navigate} />;
+    if (route === '/alerts') return isGuest ? <GuestPrompt navigate={navigate} onOpenAuth={onOpenAuth} /> : <PriceAlerts navigate={navigate} />;
     if (route === '/news') return <MarketNews navigate={navigate} />;
     if (route === '/settings') return isGuest ? <GuestPrompt navigate={navigate} onOpenAuth={onOpenAuth} /> : <Settings navigate={navigate} />;
     return <ErrorState message={`Page not found: ${route}`} onRetry={() => navigate('/')} />;
