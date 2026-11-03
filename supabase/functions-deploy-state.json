@@ -1,0 +1,17 @@
+{
+  "projectId": "71878318",
+  "functions": {
+    "delete-account": {
+      "hasChanged": false,
+      "hash": "1729be8e536a436b0ee0dc610890cdabe2990113d1b4e98125e19325a5fb95d7"
+    },
+    "market-data": {
+      "hasChanged": false,
+      "hash": "6ba2382485145f21424905b0ebac388ee7f9f6d991f0f750baa56e7c17a448ac"
+    },
+    "check-price-alerts": {
+      "hasChanged": false,
+      "hash": "a6441acd87aabb714449c40602954e31fcc0869fd15307bd196a6027cd7a6090"
+    }
+  }
+}

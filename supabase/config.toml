@@ -3,3 +3,6 @@ verify_jwt = true
 
 [functions.market-data]
 verify_jwt = true
+
+[functions.check-price-alerts]
+verify_jwt = false
