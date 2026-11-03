@@ -8,7 +8,7 @@ import {
   Search, X, TrendingUp, BarChart3, Layers, Briefcase,
   Eye, Newspaper, Settings, ChevronLeft, ChevronRight, Activity,
   ArrowUpRight, ArrowDownRight, Gauge, GitCompareArrows,
-  Menu, Sun, Moon, LogOut, Radio, LineChart, Zap, LayoutDashboard, FileText, LogIn,
+  Menu, Sun, Moon, LogOut, Radio, LineChart, Zap, LayoutDashboard, FileText, LogIn, Bell,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -33,6 +33,7 @@ const NAV_ITEMS: NavItem[] = [
   { path: '/comparison', label: 'Asset Comparison', icon: GitCompareArrows },
   { path: '/watchlists', label: 'Watchlists', icon: Eye },
   { path: '/portfolio', label: 'Portfolio Tracker', icon: Briefcase },
+  { path: '/alerts', label: 'Price Alerts', icon: Bell },
   { path: '/news', label: 'Market News', icon: Newspaper },
   { path: '/terms', label: 'Terms of Service', icon: FileText },
   { path: '/settings', label: 'Settings', icon: Settings },

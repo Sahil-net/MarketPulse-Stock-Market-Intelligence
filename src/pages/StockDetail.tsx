@@ -10,7 +10,8 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { calculateTechnicalIndicators, calculateReturn } from '@/services/technicalAnalysis';
 import { formatPrice, formatMarketCap, formatVolume, formatRatio, formatPercent, formatNumber, formatDate } from '@/lib/format';
-import { ArrowLeft, Star, TrendingUp, TrendingDown, Newspaper, CalendarClock, Coins } from 'lucide-react';
+import { ArrowLeft, Star, TrendingUp, TrendingDown, Newspaper, CalendarClock, Coins, BellPlus } from 'lucide-react';
+import { CreateAlertDialog } from '@/components/shared/CreateAlertDialog';
 import {
   AreaChart, Area, XAxis, YAxis, Tooltip as RTooltip, ResponsiveContainer, BarChart, Bar, CartesianGrid, ReferenceLine,
 } from 'recharts';
@@ -132,6 +133,16 @@ export function StockDetail({ ticker, navigate }: StockDetailProps) {
           >
             <Star className={`h-4 w-4 ${inWatchlist ? 'fill-current' : ''}`} />
           </Button>
+          <CreateAlertDialog
+            symbol={stock.ticker}
+            name={stock.name}
+            currentPrice={stock.price}
+            trigger={
+              <Button variant="outline" size="icon" title="Set price alert">
+                <BellPlus className="h-4 w-4" />
+              </Button>
+            }
+          />
         </div>
       </div>
 

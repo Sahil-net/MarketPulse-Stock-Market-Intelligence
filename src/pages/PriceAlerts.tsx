@@ -2,7 +2,6 @@ import { useMemo } from 'react';
 import { useAppStore } from '@/hooks/useAppStore';
 import { useStocks } from '@/hooks/useData';
 import { PageHeader, EmptyState } from '@/components/shared/States';
-import { CreateAlertDialog } from '@/components/shared/CreateAlertDialog';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
@@ -11,7 +10,7 @@ import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
-import { Bell, BellRing, BellPlus, Trash2, RotateCcw, ArrowUpCircle, ArrowDownCircle } from 'lucide-react';
+import { Bell, BellRing, Trash2, RotateCcw, ArrowUpCircle, ArrowDownCircle } from 'lucide-react';
 import { formatPrice, formatDate } from '@/lib/format';
 
 interface PriceAlertsProps {
@@ -37,19 +36,7 @@ export function PriceAlerts({ navigate }: PriceAlertsProps) {
       <PageHeader
         title="Price Alerts"
         description="Get notified when a stock crosses your target price"
-      >
-        <CreateAlertDialog
-          symbol=""
-          name=""
-          currentPrice={0}
-          trigger={
-            <Button size="sm" disabled>
-              <BellPlus className="h-4 w-4 mr-2" />
-              New Alert
-            </Button>
-          }
-        />
-      </PageHeader>
+      />
 
       {alerts.length === 0 ? (
         <Card>
